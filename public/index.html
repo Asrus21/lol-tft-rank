@@ -727,10 +727,21 @@
 
 </div>
 
-<script>
+<script> 
 let currentUuid = null;
 let currentMode = 'lol'; // 'lol' ou 'tft'
 
+const API_URL = (() => {
+  const hostname = window.location.hostname;
+  
+  if (hostname === 'localhost' || hostname === '127.0.0.1') {
+    return 'http://localhost:3000';
+  }
+  
+  // TEMPORÁRIO: usar domínio direto do Railway até api.asrus.app propagar
+  return 'https://lol-tft-rank-production.up.railway.app';
+})();
+ 
 window.addEventListener('load', () => {
   const saved = localStorage.getItem('riot_custom_uuid');
   if (saved) {
