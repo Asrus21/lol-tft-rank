@@ -118,24 +118,30 @@ async function fetchRiotAccount(gameName, tagLine, region) {
 // ============================================
 // Buscar dados de ranked (LoL ou TFT)
 // ============================================
+// ============================================
+// Buscar dados de ranked (LoL ou TFT) — via PUUID
+// ============================================
+
 async function fetchRankedData(player, gameMode = 'lol_solo') {
   const region = player.region.toLowerCase();
-  
+  const puuid = player.riot_puuid;
+
+  if (!puuid) {
+    console.warn('⚠️  Player sem PUUID salvo');
+    return null;
+  }
+
   try {
     const isTft = gameMode.startsWith('tft');
-    const summonerId = isTft ? player.tft_summoner_id : player.summoner_id;
-    
-    if (!summonerId) return null;
 
     const url = isTft
-      ? `https://${region}.api.riotgames.com/tft/league/v1/entries/by-summoner/${summonerId}`
-      : `https://${region}.api.riotgames.com/lol/league/v4/entries/by-summoner/${summonerId}`;
+      ? `https://${region}.api.riotgames.com/tft/league/v1/by-puuid/${puuid}`
+      : `https://${region}.api.riotgames.com/lol/league/v4/entries/by-puuid/${puuid}`;
 
     const response = await axios.get(url, {
       headers: { 'X-Riot-Token': RIOT_API_KEY }
     });
 
-    // Mapeia o gameMode para o queueType correto
     const queueTypeMap = {
       'lol': 'RANKED_SOLO_5x5',
       'lol_solo': 'RANKED_SOLO_5x5',
@@ -147,9 +153,18 @@ async function fetchRankedData(player, gameMode = 'lol_solo') {
 
     const queueType = queueTypeMap[gameMode];
     const entry = response.data.find(q => q.queueType === queueType);
+
+    // Log útil para debug
+    if (!entry) {
+      console.log(`ℹ️  ${player.current_game_name}: sem entrada ranked para ${queueType}. Filas disponíveis:`,
+        response.data.map(q => q.queueType));
+    }
+
     return entry || null;
   } catch (err) {
-    console.warn(`⚠️  Erro ao buscar ranked (${gameMode}):`, err.message);
+    // NÃO engole mais o erro silenciosamente — loga o status real
+    const status = err.response?.status;
+    console.error(`❌ Erro ao buscar ranked (${gameMode}) [HTTP ${status}]:`, err.response?.data || err.message);
     return null;
   }
 }
