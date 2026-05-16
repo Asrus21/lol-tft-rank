@@ -730,6 +730,8 @@
 <script> 
 let currentUuid = null;
 let currentMode = 'lol'; // 'lol' ou 'tft'
+
+const API_URL = '';  // Vercel proxy cuida disso
  
 window.addEventListener('load', () => {
   const saved = localStorage.getItem('riot_custom_uuid');
