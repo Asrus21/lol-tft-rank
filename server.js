@@ -8,7 +8,10 @@ const { Pool } = require('pg');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+// Chave principal (Personal Key) - usada para LoL e Account
 const RIOT_API_KEY = process.env.RIOT_API_KEY;
+// Chave específica para TFT (Development Key). Se não existir, usa a principal.
+const RIOT_API_KEY_TFT = process.env.RIOT_API_KEY_TFT || process.env.RIOT_API_KEY;
 
 // PostgreSQL connection (Railway fornece DATABASE_URL automaticamente)
 const pool = new Pool({
@@ -148,7 +151,7 @@ async function fetchRiotAccount(gameName, tagLine, region) {
   let tftSummonerData = null;
   try {
     const url = `https://${region.toLowerCase()}.api.riotgames.com/tft/summoner/v1/summoners/by-puuid/${puuid}`;
-    const res = await axios.get(url, { headers: { 'X-Riot-Token': RIOT_API_KEY } });
+    const res = await axios.get(url, { headers: { 'X-Riot-Token': RIOT_API_KEY_TFT } });
     tftSummonerData = res.data;
   } catch (err) {
     console.warn('⚠️  TFT summoner não encontrado:', err.message);
@@ -184,8 +187,11 @@ async function fetchRankedData(player, gameMode = 'lol_solo') {
       ? `https://${region}.api.riotgames.com/tft/league/v1/by-puuid/${puuid}`
       : `https://${region}.api.riotgames.com/lol/league/v4/entries/by-puuid/${puuid}`;
 
+    // TFT usa a Development Key; LoL usa a Personal Key
+    const apiKey = isTft ? RIOT_API_KEY_TFT : RIOT_API_KEY;
+
     const response = await axios.get(url, {
-      headers: { 'X-Riot-Token': RIOT_API_KEY }
+      headers: { 'X-Riot-Token': apiKey }
     });
 
     const queueTypeMap = {
@@ -501,5 +507,7 @@ app.delete('/api/command/:customUuid/:commandName', async (req, res) => {
 // ============================================
 app.listen(PORT, async () => {
   console.log(`🚀 Servidor rodando na porta ${PORT}`);
+  console.log(`🔑 RIOT_API_KEY (LoL): ${RIOT_API_KEY ? 'definida' : '❌ AUSENTE'}`);
+  console.log(`🔑 RIOT_API_KEY_TFT: ${process.env.RIOT_API_KEY_TFT ? 'definida (própria)' : 'usando a principal como fallback'}`);
   await initDatabase();
 });
