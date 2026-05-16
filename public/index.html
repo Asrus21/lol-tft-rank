@@ -478,6 +478,7 @@
     min-height: 50px;
     display: flex;
     align-items: center;
+    word-break: break-all;
   }
 
   .preview-empty { color: var(--text-muted); font-style: italic; }
@@ -727,12 +728,30 @@
 
 </div>
 
-<script> 
+<script>
+// Detectar URL da API automaticamente
+const API_URL = (() => {
+  const hostname = window.location.hostname;
+  
+  // Desenvolvimento
+  if (hostname === 'localhost' || hostname === '127.0.0.1') {
+    return 'http://localhost:3000';
+  }
+  
+  // Produção - Railway com subdomínio api
+  if (hostname === 'asrus.app' || hostname === 'www.asrus.app') {
+    return 'https://api.asrus.app';
+  }
+  
+  // Fallback - mesmo domínio
+  return `${window.location.protocol}//${window.location.host}`;
+})();
+
+console.log(`🔗 API URL detectada: ${API_URL}`);
+
 let currentUuid = null;
 let currentMode = 'lol'; // 'lol' ou 'tft'
 
-const API_URL = '';  // Vercel proxy cuida disso
- 
 window.addEventListener('load', () => {
   const saved = localStorage.getItem('riot_custom_uuid');
   if (saved) {
@@ -781,7 +800,7 @@ async function registerPlayer() {
   btn.innerHTML = '<div class="spinner"></div> Buscando...';
 
   try {
-    const res = await fetch('/api/register', {
+    const res = await fetch(`${API_URL}/api/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ gameName, tagLine, region })
@@ -819,7 +838,7 @@ async function registerPlayer() {
 
 async function loadPlayerData(uuid) {
   try {
-    const res = await fetch(`/api/player/${uuid}`);
+    const res = await fetch(`${API_URL}/api/player/${uuid}`);
     if (!res.ok) {
       localStorage.removeItem('riot_custom_uuid');
       return;
@@ -877,7 +896,7 @@ async function saveCommand() {
   }
 
   try {
-    const res = await fetch('/api/command', {
+    const res = await fetch(`${API_URL}/api/command`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ custom_uuid: currentUuid, command_name, template, game_mode })
@@ -917,7 +936,7 @@ async function loadCommands() {
   if (!currentUuid) return;
 
   try {
-    const res = await fetch(`/api/commands/${currentUuid}`);
+    const res = await fetch(`${API_URL}/api/commands/${currentUuid}`);
     const commands = await res.json();
     
     const list = document.getElementById('queueList');
@@ -943,6 +962,7 @@ async function loadCommands() {
           <div class="queue-template">${escapeHtml(cmd.template)}</div>
         </div>
         <div class="queue-actions">
+          <button class="icon-btn" onclick="copyApiLink('${cmd.command_name}')" title="Copiar link da API (StreamElements)">🔗</button>
           <button class="icon-btn" onclick="testCommand('${cmd.command_name}')" title="Testar">▶</button>
           <button class="icon-btn delete" onclick="deleteCommand('${cmd.command_name}')" title="Deletar">✕</button>
         </div>
@@ -955,6 +975,18 @@ async function loadCommands() {
 
 function escapeHtml(s) {
   return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function copyApiLink(commandName) {
+  if (!currentUuid) {
+    showAlert('Registre um jogador primeiro');
+    return;
+  }
+  // Link de texto puro para StreamElements / Nightbot / Streamlabs
+  const base = window.location.origin;
+  const link = `${base}/cmd/${currentUuid}/${commandName}`;
+  navigator.clipboard.writeText(link);
+  showAlert('🔗 Link copiado! Use no StreamElements com $(urlfetch ' + link + ')', 'success');
 }
 
 function testCommand(name) {
@@ -975,7 +1007,7 @@ async function executeCommand() {
   preview.innerHTML = '<div class="spinner" style="border-top-color: var(--accent);"></div>';
 
   try {
-    const res = await fetch(`/api/command/${currentUuid}/${name}`);
+    const res = await fetch(`${API_URL}/api/command/${currentUuid}/${name}`);
     const data = await res.json();
     
     if (!res.ok) {
@@ -984,7 +1016,28 @@ async function executeCommand() {
     }
 
     const modeTag = data.game_mode ? `<span class="mode-tag ${getModeClass(data.game_mode)}" style="margin-right: 10px;">${getModeLabel(data.game_mode)}</span>` : '';
-    preview.innerHTML = `${modeTag}<span style="color: var(--success); margin-right: 8px;">▶</span>${escapeHtml(data.result)}`;
+    
+    // Link de texto puro para StreamElements
+    const apiLink = `${window.location.origin}/cmd/${currentUuid}/${name}`;
+    
+    preview.innerHTML = `
+      <div style="width: 100%;">
+        <div style="margin-bottom: 12px;">
+          ${modeTag}<span style="color: var(--success); margin-right: 8px;">▶</span>${escapeHtml(data.result)}
+        </div>
+        <div style="border-top: 1px solid var(--border); padding-top: 10px;">
+          <div style="font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-muted); margin-bottom: 6px; font-weight: 700;">
+            🔗 Link da API (StreamElements / Nightbot)
+          </div>
+          <div style="display: flex; gap: 8px; align-items: center;">
+            <input type="text" readonly value="${apiLink}" 
+              style="flex: 1; font-size: 11px; padding: 6px 10px; background: var(--bg-secondary);"
+              onclick="this.select()">
+            <button class="copy-btn" onclick="copyApiLink('${name}')">COPY</button>
+          </div>
+        </div>
+      </div>
+    `;
   } catch (err) {
     preview.innerHTML = `<span style="color: var(--danger);">${err.message}</span>`;
   }
@@ -994,7 +1047,7 @@ async function deleteCommand(name) {
   if (!confirm(`Deletar comando "${name}"?`)) return;
 
   try {
-    await fetch(`/api/command/${currentUuid}/${name}`, { method: 'DELETE' });
+    await fetch(`${API_URL}/api/command/${currentUuid}/${name}`, { method: 'DELETE' });
     showAlert('Comando deletado', 'success');
     loadCommands();
   } catch (err) {
