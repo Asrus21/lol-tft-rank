@@ -8,10 +8,13 @@ const { Pool } = require('pg');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-// Chave principal (Personal Key) - usada para LoL e Account
+
+// Chave da Riot (Personal Key) - usada para Account e LoL
 const RIOT_API_KEY = process.env.RIOT_API_KEY;
-// Chave específica para TFT (Development Key). Se não existir, usa a principal.
-const RIOT_API_KEY_TFT = process.env.RIOT_API_KEY_TFT || process.env.RIOT_API_KEY;
+
+// ===== TFT DESATIVADO =====
+// const RIOT_API_KEY_TFT = process.env.RIOT_API_KEY_TFT || process.env.RIOT_API_KEY;
+// ==========================
 
 // PostgreSQL connection (Railway fornece DATABASE_URL automaticamente)
 const pool = new Pool({
@@ -54,19 +57,11 @@ const TIER_PT = {
   'DIAMOND': 'Diamante',
   'MASTER': 'Mestre',
   'GRANDMASTER': 'Grão-Mestre',
-  'CHALLENGER': 'Desafiante',
-  // TFT Hyper Roll (Turbo) usa tiers de cor
-  'GRAY': 'Cinza',
-  'GREEN': 'Verde',
-  'BLUE': 'Azul',
-  'PURPLE': 'Roxo',
-  'ORANGE': 'Laranja'
+  'CHALLENGER': 'Desafiante'
 };
 
 // Conversão de divisão (numeral romano -> número)
-const DIVISION_NUM = {
-  'I': '1', 'II': '2', 'III': '3', 'IV': '4', 'V': '5'
-};
+const DIVISION_NUM = { 'I': '1', 'II': '2', 'III': '3', 'IV': '4', 'V': '5' };
 
 // Tiers que não possuem divisão real
 const TIERS_SEM_DIVISAO = ['MASTER', 'GRANDMASTER', 'CHALLENGER'];
@@ -101,7 +96,6 @@ async function initDatabase() {
       );
     `);
 
-    // Migrações
     await pool.query(`ALTER TABLE players ADD COLUMN IF NOT EXISTS tft_summoner_id VARCHAR(100);`);
 
     await pool.query(`
@@ -125,7 +119,7 @@ async function initDatabase() {
 }
 
 // ============================================
-// Buscar dados na API da Riot (LoL + TFT)
+// Buscar dados na API da Riot (LoL)
 // ============================================
 async function fetchRiotAccount(gameName, tagLine, region) {
   const cluster = REGION_ROUTING[region.toLowerCase()] || 'americas';
@@ -137,7 +131,7 @@ async function fetchRiotAccount(gameName, tagLine, region) {
   });
   const { puuid } = accountResponse.data;
 
-  // 2. Summoner ID do LoL (opcional, mantido para compatibilidade)
+  // 2. Summoner ID do LoL
   let summonerData = null;
   try {
     const url = `https://${region.toLowerCase()}.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/${puuid}`;
@@ -147,27 +141,29 @@ async function fetchRiotAccount(gameName, tagLine, region) {
     console.warn('⚠️  LoL summoner não encontrado:', err.message);
   }
 
-  // 3. Summoner ID do TFT (opcional, mantido para compatibilidade)
-  let tftSummonerData = null;
-  try {
-    const url = `https://${region.toLowerCase()}.api.riotgames.com/tft/summoner/v1/summoners/by-puuid/${puuid}`;
-    const res = await axios.get(url, { headers: { 'X-Riot-Token': RIOT_API_KEY_TFT } });
-    tftSummonerData = res.data;
-  } catch (err) {
-    console.warn('⚠️  TFT summoner não encontrado:', err.message);
-  }
+  // ===== TFT DESATIVADO =====
+  // 3. Summoner ID do TFT (endpoint separado)
+  // let tftSummonerData = null;
+  // try {
+  //   const url = `https://${region.toLowerCase()}.api.riotgames.com/tft/summoner/v1/summoners/by-puuid/${puuid}`;
+  //   const res = await axios.get(url, { headers: { 'X-Riot-Token': RIOT_API_KEY_TFT } });
+  //   tftSummonerData = res.data;
+  // } catch (err) {
+  //   console.warn('⚠️  TFT summoner não encontrado:', err.message);
+  // }
+  // ==========================
 
   return {
     puuid,
     gameName: accountResponse.data.gameName,
     tagLine: accountResponse.data.tagLine,
     summonerId: summonerData?.id || null,
-    tftSummonerId: tftSummonerData?.id || null
+    tftSummonerId: null // TFT desativado
   };
 }
 
 // ============================================
-// Buscar dados de ranked (LoL ou TFT) — via PUUID
+// Buscar dados de ranked (LoL) — via PUUID
 // ============================================
 async function fetchRankedData(player, gameMode = 'lol_solo') {
   const region = player.region.toLowerCase();
@@ -179,31 +175,33 @@ async function fetchRankedData(player, gameMode = 'lol_solo') {
   }
 
   try {
-    const isTft = gameMode.startsWith('tft');
+    // ===== TFT DESATIVADO =====
+    // const isTft = gameMode.startsWith('tft');
+    // const url = isTft
+    //   ? `https://${region}.api.riotgames.com/tft/league/v1/by-puuid/${puuid}`
+    //   : `https://${region}.api.riotgames.com/lol/league/v4/entries/by-puuid/${puuid}`;
+    // const apiKey = isTft ? RIOT_API_KEY_TFT : RIOT_API_KEY;
+    // ==========================
 
-    // TFT: /tft/league/v1/by-puuid/{puuid}  (atenção: NÃO tem "entries")
-    // LoL: /lol/league/v4/entries/by-puuid/{puuid}
-    const url = isTft
-      ? `https://${region}.api.riotgames.com/tft/league/v1/by-puuid/${puuid}`
-      : `https://${region}.api.riotgames.com/lol/league/v4/entries/by-puuid/${puuid}`;
-
-    // TFT usa a Development Key; LoL usa a Personal Key
-    const apiKey = isTft ? RIOT_API_KEY_TFT : RIOT_API_KEY;
+    // Apenas LoL
+    const url = `https://${region}.api.riotgames.com/lol/league/v4/entries/by-puuid/${puuid}`;
 
     const response = await axios.get(url, {
-      headers: { 'X-Riot-Token': apiKey }
+      headers: { 'X-Riot-Token': RIOT_API_KEY }
     });
 
     const queueTypeMap = {
       'lol': 'RANKED_SOLO_5x5',
       'lol_solo': 'RANKED_SOLO_5x5',
-      'lol_flex': 'RANKED_FLEX_SR',
-      'tft': 'RANKED_TFT',
-      'tft_double_up': 'RANKED_TFT_DOUBLE_UP',
-      'tft_turbo': 'RANKED_TFT_TURBO'
+      'lol_flex': 'RANKED_FLEX_SR'
+      // ===== TFT DESATIVADO =====
+      // 'tft': 'RANKED_TFT',
+      // 'tft_double_up': 'RANKED_TFT_DOUBLE_UP',
+      // 'tft_turbo': 'RANKED_TFT_TURBO'
+      // ==========================
     };
 
-    const queueType = queueTypeMap[gameMode];
+    const queueType = queueTypeMap[gameMode] || 'RANKED_SOLO_5x5';
     const entry = response.data.find(q => q.queueType === queueType);
 
     if (!entry) {
@@ -221,35 +219,27 @@ async function fetchRankedData(player, gameMode = 'lol_solo') {
 
 // ============================================
 // Substituir variáveis no template
+// Aceita tanto (variavel) quanto {variavel}
 // ============================================
 function applyTemplate(template, player, ranked, gameMode) {
-  const isTurbo = gameMode === 'tft_turbo';
-
   let rankStr = 'Unranked';
   let tierStr = 'Unranked';
   let divStr = '';
   let lpStr = '0';
 
   if (ranked) {
-    if (isTurbo && ranked.ratedTier) {
-      // TFT Hyper Roll: GRAY, GREEN, BLUE, PURPLE, ORANGE (sem divisão)
-      tierStr = traduzirTier(ranked.ratedTier);
+    tierStr = traduzirTier(ranked.tier);
+    divStr = traduzirDivisao(ranked.rank);
+
+    // Mestre / Grão-Mestre / Desafiante não têm divisão real
+    if (TIERS_SEM_DIVISAO.includes((ranked.tier || '').toUpperCase())) {
       rankStr = tierStr;
-      lpStr = (ranked.ratedRating || 0).toString();
+      divStr = '';
     } else {
-      tierStr = traduzirTier(ranked.tier);
-      divStr = traduzirDivisao(ranked.rank);
-
-      // Mestre / Grão-Mestre / Desafiante não têm divisão real
-      if (TIERS_SEM_DIVISAO.includes((ranked.tier || '').toUpperCase())) {
-        rankStr = tierStr;
-        divStr = '';
-      } else {
-        rankStr = `${tierStr} ${divStr}`.trim();
-      }
-
-      lpStr = (ranked.leaguePoints || 0).toString();
+      rankStr = `${tierStr} ${divStr}`.trim();
     }
+
+    lpStr = (ranked.leaguePoints || 0).toString();
   }
 
   const wins = ranked?.wins || 0;
@@ -257,30 +247,29 @@ function applyTemplate(template, player, ranked, gameMode) {
   const total = wins + losses;
   const winrate = total > 0 ? `${Math.round((wins / total) * 100)}%` : '0%';
 
-  // No TFT, "wins" significa Top 4 (não vitória de 1º lugar)
   const variables = {
-    '(player)': player.current_game_name || 'Desconhecido',
-    '(tag)': player.current_tag_line || '',
-    '(uuid)': player.custom_uuid,
-    '(region)': player.region?.toUpperCase() || '',
-    '(rank)': rankStr,
-    '(tier)': tierStr,
-    '(divisao)': divStr,
-    '(pontos)': lpStr,
-    '(lp)': lpStr,
-    '(vitorias)': wins.toString(),
-    '(derrotas)': losses.toString(),
-    '(winrate)': winrate,
-    '(top4)': wins.toString(),
-    '(top4rate)': winrate,
-    '(jogos)': total.toString(),
-    '(modo)': gameMode.toUpperCase()
+    'player': player.current_game_name || 'Desconhecido',
+    'tag': player.current_tag_line || '',
+    'uuid': player.custom_uuid,
+    'region': player.region?.toUpperCase() || '',
+    'rank': rankStr,
+    'tier': tierStr,
+    'divisao': divStr,
+    'pontos': lpStr,
+    'lp': lpStr,
+    'vitorias': wins.toString(),
+    'derrotas': losses.toString(),
+    'winrate': winrate,
+    'jogos': total.toString(),
+    'modo': gameMode.toUpperCase()
   };
 
   let result = template;
   for (const [key, value] of Object.entries(variables)) {
-    const regex = new RegExp(key.replace(/[()]/g, '\\$&'), 'gi');
-    result = result.replace(regex, value);
+    // Aceita (key) e {key}, case-insensitive
+    const regexParen = new RegExp('\\(' + key + '\\)', 'gi');
+    const regexBrace = new RegExp('\\{' + key + '\\}', 'gi');
+    result = result.replace(regexParen, value).replace(regexBrace, value);
   }
   return result;
 }
@@ -306,13 +295,12 @@ app.post('/api/register', async (req, res) => {
     if (existing.rows.length > 0) {
       const player = existing.rows[0];
 
-      // Atualiza tudo que possa ter mudado
       await pool.query(`
         UPDATE players
         SET current_game_name = $1, current_tag_line = $2,
-            summoner_id = $3, tft_summoner_id = $4, updated_at = CURRENT_TIMESTAMP
-        WHERE riot_puuid = $5
-      `, [riotData.gameName, riotData.tagLine, riotData.summonerId, riotData.tftSummonerId, riotData.puuid]);
+            summoner_id = $3, updated_at = CURRENT_TIMESTAMP
+        WHERE riot_puuid = $4
+      `, [riotData.gameName, riotData.tagLine, riotData.summonerId, riotData.puuid]);
 
       return res.json({
         custom_uuid: player.custom_uuid,
@@ -327,9 +315,9 @@ app.post('/api/register', async (req, res) => {
     const customUuid = uuidv4();
 
     await pool.query(`
-      INSERT INTO players (custom_uuid, riot_puuid, current_game_name, current_tag_line, region, summoner_id, tft_summoner_id)
-      VALUES ($1, $2, $3, $4, $5, $6, $7)
-    `, [customUuid, riotData.puuid, riotData.gameName, riotData.tagLine, region.toLowerCase(), riotData.summonerId, riotData.tftSummonerId]);
+      INSERT INTO players (custom_uuid, riot_puuid, current_game_name, current_tag_line, region, summoner_id)
+      VALUES ($1, $2, $3, $4, $5, $6)
+    `, [customUuid, riotData.puuid, riotData.gameName, riotData.tagLine, region.toLowerCase(), riotData.summonerId]);
 
     res.json({
       custom_uuid: customUuid,
@@ -375,7 +363,8 @@ app.post('/api/command', async (req, res) => {
     return res.status(400).json({ error: 'custom_uuid, command_name e template são obrigatórios' });
   }
 
-  const validModes = ['lol_solo', 'lol_flex', 'tft', 'tft_double_up', 'tft_turbo'];
+  // Apenas modos de LoL (TFT desativado)
+  const validModes = ['lol_solo', 'lol_flex'];
   if (!validModes.includes(game_mode)) {
     return res.status(400).json({ error: 'game_mode inválido. Use: ' + validModes.join(', ') });
   }
@@ -398,7 +387,7 @@ app.post('/api/command', async (req, res) => {
 });
 
 // ============================================
-// ROTA: Executar custom command
+// ROTA: Executar custom command (JSON)
 // ============================================
 app.get('/api/command/:customUuid/:commandName', async (req, res) => {
   const { customUuid, commandName } = req.params;
@@ -440,7 +429,6 @@ app.get('/api/command/:customUuid/:commandName', async (req, res) => {
 app.get('/cmd/:customUuid/:commandName', async (req, res) => {
   const { customUuid, commandName } = req.params;
 
-  // Sempre responde texto puro
   res.set('Content-Type', 'text/plain; charset=utf-8');
 
   try {
@@ -464,7 +452,6 @@ app.get('/cmd/:customUuid/:commandName', async (req, res) => {
     const ranked = await fetchRankedData(player, game_mode);
     const result = applyTemplate(template, player, ranked, game_mode);
 
-    // Devolve SÓ a frase, sem JSON, sem aspas
     res.send(result);
   } catch (err) {
     console.error('Erro na rota /cmd:', err.message);
@@ -507,7 +494,7 @@ app.delete('/api/command/:customUuid/:commandName', async (req, res) => {
 // ============================================
 app.listen(PORT, async () => {
   console.log(`🚀 Servidor rodando na porta ${PORT}`);
-  console.log(`🔑 RIOT_API_KEY (LoL): ${RIOT_API_KEY ? 'definida' : '❌ AUSENTE'}`);
-  console.log(`🔑 RIOT_API_KEY_TFT: ${process.env.RIOT_API_KEY_TFT ? 'definida (própria)' : 'usando a principal como fallback'}`);
+  console.log(`🔑 RIOT_API_KEY: ${RIOT_API_KEY ? 'definida' : '❌ AUSENTE'}`);
+  console.log(`🎮 Modo: somente LoL (TFT desativado)`);
   await initDatabase();
 });
