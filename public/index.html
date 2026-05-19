@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Riot UUID Registry — LoL + TFT</title>
+<title>Rank LoL — asrus.app</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Outfit:wght@300;500;700;900&display=swap" rel="stylesheet">
@@ -18,7 +18,6 @@
     --accent: #a78bfa;
     --accent-hot: #f472b6;
     --accent-cool: #60a5fa;
-    --accent-tft: #fbbf24;
     --success: #34d399;
     --warning: #fbbf24;
     --danger: #f87171;
@@ -41,7 +40,7 @@
     content: '';
     position: fixed;
     inset: 0;
-    background: 
+    background:
       radial-gradient(circle at 15% 20%, rgba(167, 139, 250, 0.12), transparent 40%),
       radial-gradient(circle at 85% 80%, rgba(244, 114, 182, 0.08), transparent 40%);
     pointer-events: none;
@@ -51,11 +50,12 @@
   .container {
     position: relative;
     z-index: 1;
-    max-width: 1200px;
+    max-width: 1100px;
     margin: 0 auto;
     padding: 24px;
   }
 
+  /* HEADER */
   .header {
     display: flex;
     justify-content: space-between;
@@ -88,6 +88,14 @@
     box-shadow: 0 4px 16px rgba(167, 139, 250, 0.35);
   }
 
+  .logo-sub {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-weight: 400;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
   .status-pill {
     display: flex;
     align-items: center;
@@ -112,19 +120,13 @@
 
   @keyframes pulse { 50% { opacity: 0.5; } }
 
-  .main-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-  }
-
-  @media (max-width: 900px) { .main-grid { grid-template-columns: 1fr; } }
-
+  /* PANELS */
   .panel {
     background: var(--bg-card);
     border: 1px solid var(--border);
     border-radius: 14px;
     overflow: hidden;
+    margin-bottom: 20px;
   }
 
   .panel-header {
@@ -166,6 +168,7 @@
 
   .panel-body { padding: 22px; }
 
+  /* FORM */
   .form-group { margin-bottom: 16px; }
 
   .form-row {
@@ -210,19 +213,19 @@
     font-size: 13px;
   }
 
-  /* MODE TABS (LoL / TFT) */
-  .mode-tabs {
+  /* TABS de método de busca */
+  .method-tabs {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: 1fr 1fr;
     gap: 8px;
-    margin-bottom: 14px;
+    margin-bottom: 18px;
     padding: 4px;
     background: var(--bg-elevated);
     border-radius: 10px;
     border: 1px solid var(--border-light);
   }
 
-  .mode-tab {
+  .method-tab {
     padding: 10px;
     text-align: center;
     border-radius: 7px;
@@ -233,28 +236,20 @@
     letter-spacing: 1px;
     color: var(--text-secondary);
     transition: all 0.2s;
-    border: 1px solid transparent;
   }
 
-  .mode-tab:hover { color: var(--text-primary); }
+  .method-tab:hover { color: var(--text-primary); }
 
-  .mode-tab.active {
+  .method-tab.active {
     background: linear-gradient(135deg, var(--accent), var(--accent-hot));
     color: #fff;
     box-shadow: 0 2px 12px rgba(167, 139, 250, 0.3);
   }
 
-  .mode-tab.active.tft {
-    background: linear-gradient(135deg, var(--accent-tft), #fb923c);
-    box-shadow: 0 2px 12px rgba(251, 191, 36, 0.3);
-  }
+  .method-panel { display: none; }
+  .method-panel.active { display: block; }
 
-  .queue-subselect {
-    display: none;
-    margin-bottom: 14px;
-  }
-  .queue-subselect.show { display: block; }
-
+  /* BOTÕES */
   .btn {
     display: inline-flex;
     align-items: center;
@@ -279,13 +274,10 @@
   .btn:active { transform: translateY(0); }
   .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
-  .btn-sm {
-    padding: 8px 14px;
-    font-size: 12px;
-    width: auto;
-  }
+  .btn-sm { padding: 12px 20px; font-size: 13px; width: auto; }
 
-  .uuid-result {
+  /* RESULTADO DA BUSCA */
+  .player-found {
     background: linear-gradient(135deg, rgba(167, 139, 250, 0.12), rgba(244, 114, 182, 0.08));
     border: 1px solid var(--accent);
     border-radius: 10px;
@@ -293,14 +285,14 @@
     margin-top: 16px;
     display: none;
   }
-  .uuid-result.show { display: block; animation: slideIn 0.3s ease-out; }
+  .player-found.show { display: block; animation: slideIn 0.3s ease-out; }
 
   @keyframes slideIn {
     from { opacity: 0; transform: translateY(-8px); }
     to { opacity: 1; transform: translateY(0); }
   }
 
-  .uuid-label {
+  .player-found-label {
     font-size: 11px;
     text-transform: uppercase;
     letter-spacing: 1.5px;
@@ -309,15 +301,25 @@
     font-weight: 700;
   }
 
+  .player-found-info {
+    display: flex;
+    gap: 16px;
+    font-size: 14px;
+    color: var(--text-secondary);
+    flex-wrap: wrap;
+  }
+  .player-found-info strong { color: var(--text-primary); }
+
   .uuid-code {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 13px;
+    font-size: 12px;
     color: var(--text-primary);
     word-break: break-all;
     padding: 10px 12px;
     background: var(--bg-primary);
     border-radius: 6px;
     border: 1px solid var(--border);
+    margin-top: 10px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -328,7 +330,7 @@
     background: transparent;
     border: 1px solid var(--border-light);
     color: var(--text-secondary);
-    padding: 4px 10px;
+    padding: 5px 12px;
     border-radius: 4px;
     cursor: pointer;
     font-size: 11px;
@@ -336,118 +338,24 @@
     transition: all 0.2s;
     flex-shrink: 0;
   }
-
   .copy-btn:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
 
-  .player-info {
-    display: flex;
-    gap: 16px;
-    margin-top: 12px;
-    font-size: 13px;
-    color: var(--text-secondary);
-    flex-wrap: wrap;
-  }
-  .player-info span strong { color: var(--text-primary); font-weight: 700; }
-
-  .queue-list {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    max-height: 360px;
-    overflow-y: auto;
-  }
-  .queue-list::-webkit-scrollbar { width: 6px; }
-  .queue-list::-webkit-scrollbar-track { background: var(--bg-secondary); }
-  .queue-list::-webkit-scrollbar-thumb { background: var(--border-light); border-radius: 3px; }
-
-  .queue-item {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    padding: 12px 14px;
-    background: var(--bg-elevated);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    transition: all 0.2s;
-  }
-  .queue-item:hover { border-color: var(--accent); background: var(--bg-secondary); }
-
-  .queue-number {
-    width: 30px;
-    height: 30px;
-    background: var(--bg-card);
-    border: 1px solid var(--border-light);
-    border-radius: 6px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 12px;
-    font-weight: 700;
-    color: var(--accent);
-    flex-shrink: 0;
-  }
-
-  .queue-content { flex: 1; min-width: 0; }
-
-  .queue-name-row {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 3px;
-  }
-
-  .queue-name {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 13px;
-    color: var(--accent-cool);
-    font-weight: 500;
-  }
-
-  .mode-tag {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 9px;
-    padding: 2px 6px;
-    border-radius: 4px;
+  /* VARIÁVEIS */
+  .vars-section-title {
+    font-size: 10px;
     text-transform: uppercase;
-    letter-spacing: 0.8px;
+    letter-spacing: 1.5px;
+    color: var(--text-muted);
+    margin-top: 10px;
+    margin-bottom: 4px;
     font-weight: 700;
   }
-  .mode-tag.lol { background: rgba(167, 139, 250, 0.15); color: var(--accent); border: 1px solid var(--accent); }
-  .mode-tag.tft { background: rgba(251, 191, 36, 0.15); color: var(--accent-tft); border: 1px solid var(--accent-tft); }
-
-  .queue-template {
-    font-size: 13px;
-    color: var(--text-secondary);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  .queue-actions { display: flex; gap: 6px; flex-shrink: 0; }
-
-  .icon-btn {
-    width: 30px;
-    height: 30px;
-    border-radius: 6px;
-    background: transparent;
-    border: 1px solid var(--border-light);
-    color: var(--text-secondary);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 13px;
-    transition: all 0.2s;
-  }
-  .icon-btn:hover { border-color: var(--accent); color: var(--accent); }
-  .icon-btn.delete:hover { border-color: var(--danger); color: var(--danger); }
 
   .vars-help {
     display: flex;
     flex-wrap: wrap;
     gap: 6px;
-    margin-top: 8px;
+    margin-top: 6px;
   }
 
   .var-chip {
@@ -462,35 +370,76 @@
     transition: all 0.15s;
   }
   .var-chip:hover { border-color: var(--accent); color: var(--accent); background: var(--bg-primary); }
-  .var-chip.tft-only { color: var(--accent-tft); }
-  .var-chip.tft-only:hover { border-color: var(--accent-tft); color: var(--accent-tft); }
 
-  .preview-box {
+  /* DISABLED OVERLAY */
+  .locked { opacity: 0.4; pointer-events: none; }
+
+  /* PREVIEW DE TWITCH */
+  .twitch-preview {
     background: var(--bg-primary);
     border: 1px solid var(--border);
-    border-left: 3px solid var(--accent);
-    border-radius: 8px;
-    padding: 14px 16px;
-    margin-top: 12px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 14px;
-    color: var(--text-primary);
-    min-height: 50px;
+    border-radius: 10px;
+    padding: 16px;
+    margin-top: 14px;
+  }
+
+  .twitch-line {
     display: flex;
-    align-items: center;
-    word-break: break-all;
+    gap: 8px;
+    align-items: baseline;
+    font-size: 14px;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
   }
+  .twitch-line:last-child { margin-bottom: 0; }
 
-  .preview-empty { color: var(--text-muted); font-style: italic; }
-
-  .empty-state {
-    text-align: center;
-    padding: 32px 16px;
-    color: var(--text-muted);
+  .twitch-user {
+    font-weight: 700;
+    color: var(--accent-cool);
     font-size: 14px;
   }
-  .empty-state-icon { font-size: 32px; margin-bottom: 8px; opacity: 0.5; }
 
+  .twitch-arrow { color: var(--text-muted); }
+
+  .twitch-msg { color: var(--text-primary); }
+
+  .twitch-msg.bot {
+    color: var(--success);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+  }
+
+  .twitch-divider {
+    border: none;
+    border-top: 1px dashed var(--border-light);
+    margin: 12px 0;
+  }
+
+  .preview-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+    font-weight: 700;
+  }
+
+  /* CAMPO COPIAR */
+  .copy-field {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-top: 6px;
+  }
+  .copy-field input {
+    flex: 1;
+    font-size: 11px;
+    padding: 8px 10px;
+    background: var(--bg-secondary);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* ALERTS */
   .alert {
     padding: 12px 16px;
     border-radius: 8px;
@@ -504,6 +453,7 @@
   .alert-error { background: rgba(248, 113, 113, 0.1); border: 1px solid var(--danger); color: var(--danger); }
   .alert-success { background: rgba(52, 211, 153, 0.1); border: 1px solid var(--success); color: var(--success); }
 
+  /* SPINNER */
   .spinner {
     width: 14px;
     height: 14px;
@@ -514,29 +464,15 @@
   }
   @keyframes spin { to { transform: rotate(360deg); } }
 
-  .executor-section {
-    margin-top: 20px;
-    padding: 18px;
-    background: var(--bg-secondary);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-  }
-
-  .executor-row {
-    display: grid;
-    grid-template-columns: 1fr auto;
-    gap: 10px;
-    margin-bottom: 12px;
-  }
-
-  .vars-section-title {
-    font-size: 10px;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
+  .hint {
+    font-size: 12px;
     color: var(--text-muted);
-    margin-top: 10px;
-    margin-bottom: 4px;
-    font-weight: 700;
+    margin-top: 6px;
+    line-height: 1.5;
+  }
+
+  @media (max-width: 640px) {
+    .form-row { grid-template-columns: 1fr; }
   }
 </style>
 </head>
@@ -546,10 +482,10 @@
   <!-- HEADER -->
   <div class="header">
     <div class="logo">
-      <div class="logo-icon">⚡</div>
+      <div class="logo-icon">⚔️</div>
       <div>
-        Riot UUID Registry
-        <div style="font-size: 11px; color: var(--text-muted); font-weight: 400; letter-spacing: 1px; text-transform: uppercase;">LoL + TFT · Persistent ID System</div>
+        Rank LoL
+        <div class="logo-sub">League of Legends · Custom Commands</div>
       </div>
     </div>
     <div class="status-pill">
@@ -558,19 +494,24 @@
     </div>
   </div>
 
-  <!-- GRID PRINCIPAL -->
-  <div class="main-grid">
+  <!-- PASSO 1: BUSCAR JOGADOR -->
+  <div class="panel">
+    <div class="panel-header">
+      <div class="panel-title">Buscar Jogador</div>
+      <div class="panel-badge">PASSO 01</div>
+    </div>
+    <div class="panel-body">
 
-    <!-- ESQUERDA: REGISTRO -->
-    <div class="panel">
-      <div class="panel-header">
-        <div class="panel-title">Register / Lookup</div>
-        <div class="panel-badge">STEP 01</div>
+      <div id="alertBox" class="alert"></div>
+
+      <!-- escolha do método -->
+      <div class="method-tabs">
+        <div class="method-tab active" data-method="riotid" onclick="selectMethod('riotid')">Nick + Tag</div>
+        <div class="method-tab" data-method="uuid" onclick="selectMethod('uuid')">UUID</div>
       </div>
-      <div class="panel-body">
-        
-        <div id="alertBox" class="alert"></div>
 
+      <!-- método: nick + tag + região -->
+      <div class="method-panel active" id="panel-riotid">
         <div class="form-row">
           <div class="form-group">
             <label>Game Name</label>
@@ -581,9 +522,8 @@
             <input type="text" id="tagLine" placeholder="ex: BR1" autocomplete="off">
           </div>
         </div>
-
         <div class="form-group">
-          <label>Region</label>
+          <label>Região</label>
           <select id="region">
             <option value="br1">BR1 — Brasil</option>
             <option value="na1">NA1 — North America</option>
@@ -598,128 +538,115 @@
             <option value="ru">RU — Russia</option>
           </select>
         </div>
-
-        <button class="btn" id="registerBtn" onclick="registerPlayer()">
-          🔍 Buscar / Gerar UUID
+        <button class="btn" id="searchRiotIdBtn" onclick="searchByRiotId()">
+          🔍 Buscar Jogador
         </button>
-
-        <div id="uuidResult" class="uuid-result">
-          <div class="uuid-label">✓ Custom UUID</div>
-          <div class="uuid-code">
-            <span id="uuidValue"></span>
-            <button class="copy-btn" onclick="copyUuid()">COPY</button>
-          </div>
-          <div class="player-info">
-            <span>👤 <strong id="playerNameDisplay"></strong></span>
-            <span>🌎 <strong id="playerRegionDisplay"></strong></span>
-            <span id="newBadge" style="color: var(--success);"></span>
-          </div>
-        </div>
-
       </div>
+
+      <!-- método: uuid -->
+      <div class="method-panel" id="panel-uuid">
+        <div class="form-group">
+          <label>UUID Customizado</label>
+          <input type="text" id="uuidInput" placeholder="ex: 4270c04e-529b-4d07-8949-519923fc1828" autocomplete="off">
+          <div class="hint">Cole o UUID que você já gerou anteriormente.</div>
+        </div>
+        <button class="btn" id="searchUuidBtn" onclick="searchByUuid()">
+          🔍 Buscar por UUID
+        </button>
+      </div>
+
+      <!-- resultado -->
+      <div id="playerFound" class="player-found">
+        <div class="player-found-label">✓ Jogador encontrado</div>
+        <div class="player-found-info">
+          <span>👤 <strong id="pfName"></strong></span>
+          <span>🌎 <strong id="pfRegion"></strong></span>
+        </div>
+        <div class="uuid-code">
+          <span id="pfUuid"></span>
+          <button class="copy-btn" onclick="copyUuid()">COPY UUID</button>
+        </div>
+      </div>
+
     </div>
+  </div>
 
-    <!-- DIREITA: CUSTOM COMMAND -->
-    <div class="panel">
-      <div class="panel-header">
-        <div class="panel-title">Custom Command</div>
-        <div class="panel-badge">STEP 02</div>
-      </div>
-      <div class="panel-body">
-        
-        <label>Game Mode</label>
-        <div class="mode-tabs">
-          <div class="mode-tab active" data-mode="lol" onclick="selectMode('lol')">⚔️ LEAGUE</div>
-          <div class="mode-tab" data-mode="tft" onclick="selectMode('tft')">♟️ TFT</div>
+  <!-- PASSO 2: MONTAR E TESTAR COMANDO -->
+  <div class="panel" id="commandPanel">
+    <div class="panel-header">
+      <div class="panel-title">Montar &amp; Testar Comando</div>
+      <div class="panel-badge">PASSO 02</div>
+    </div>
+    <div class="panel-body" id="commandBody">
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Nome do Comando</label>
+          <input type="text" id="commandName" placeholder="ex: elo, rank, pdl" autocomplete="off">
         </div>
-
-        <!-- Sub-fila do LoL -->
-        <div class="form-group queue-subselect show" id="lolQueues">
-          <label>LoL Queue</label>
-          <select id="lolQueueSelect">
+        <div class="form-group">
+          <label>Fila</label>
+          <select id="queueSelect">
             <option value="lol_solo">Ranked Solo/Duo</option>
             <option value="lol_flex">Ranked Flex</option>
           </select>
         </div>
-
-        <!-- Sub-fila do TFT -->
-        <div class="form-group queue-subselect" id="tftQueues">
-          <label>TFT Queue</label>
-          <select id="tftQueueSelect">
-            <option value="tft">Ranked TFT</option>
-            <option value="tft_double_up">Double Up</option>
-            <option value="tft_turbo">Hyper Roll (Turbo)</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label>Command Name</label>
-          <input type="text" id="commandName" placeholder="ex: rank, tftrank, pdl" autocomplete="off">
-        </div>
-
-        <div class="form-group">
-          <label>Template (clique nas variáveis para inserir)</label>
-          <textarea id="commandTemplate" placeholder="ex: (player) está (rank) com (pontos) pontos."></textarea>
-          
-          <div class="vars-section-title">Geral</div>
-          <div class="vars-help">
-            <span class="var-chip" onclick="insertVar('(player)')">(player)</span>
-            <span class="var-chip" onclick="insertVar('(tag)')">(tag)</span>
-            <span class="var-chip" onclick="insertVar('(region)')">(region)</span>
-            <span class="var-chip" onclick="insertVar('(modo)')">(modo)</span>
-          </div>
-
-          <div class="vars-section-title">Ranked</div>
-          <div class="vars-help">
-            <span class="var-chip" onclick="insertVar('(rank)')">(rank)</span>
-            <span class="var-chip" onclick="insertVar('(tier)')">(tier)</span>
-            <span class="var-chip" onclick="insertVar('(divisao)')">(divisao)</span>
-            <span class="var-chip" onclick="insertVar('(pontos)')">(pontos)</span>
-            <span class="var-chip" onclick="insertVar('(lp)')">(lp)</span>
-          </div>
-
-          <div class="vars-section-title">Estatísticas</div>
-          <div class="vars-help">
-            <span class="var-chip" onclick="insertVar('(vitorias)')">(vitorias)</span>
-            <span class="var-chip" onclick="insertVar('(derrotas)')">(derrotas)</span>
-            <span class="var-chip" onclick="insertVar('(winrate)')">(winrate)</span>
-            <span class="var-chip" onclick="insertVar('(jogos)')">(jogos)</span>
-            <span class="var-chip tft-only" onclick="insertVar('(top4)')">(top4) ♟️</span>
-            <span class="var-chip tft-only" onclick="insertVar('(top4rate)')">(top4rate) ♟️</span>
-          </div>
-        </div>
-
-        <button class="btn" id="saveCmdBtn" onclick="saveCommand()" disabled>
-          💾 Salvar Comando
-        </button>
-
-      </div>
-    </div>
-  </div>
-
-  <!-- COMANDOS SALVOS -->
-  <div class="panel" style="margin-top: 20px;">
-    <div class="panel-header">
-      <div class="panel-title">Saved Commands Queue</div>
-      <div class="panel-badge" id="queueCount">0 ITEMS</div>
-    </div>
-    <div class="panel-body">
-      
-      <div id="queueList" class="queue-list">
-        <div class="empty-state">
-          <div class="empty-state-icon">🎵</div>
-          Registre um jogador para visualizar a fila de comandos
-        </div>
       </div>
 
-      <div class="executor-section" id="executorSection" style="display: none;">
-        <label>Test / Execute Command</label>
-        <div class="executor-row" style="margin-top: 6px;">
-          <input type="text" id="execCommand" placeholder="ex: rank">
-          <button class="btn btn-sm" onclick="executeCommand()" style="padding: 12px 20px;">▶ EXECUTAR</button>
+      <div class="form-group">
+        <label>Template da Resposta</label>
+        <textarea id="commandTemplate" placeholder="ex: (player) está (rank) com (pontos) pontos."></textarea>
+
+        <div class="vars-section-title">Geral</div>
+        <div class="vars-help">
+          <span class="var-chip" onclick="insertVar('(player)')">(player)</span>
+          <span class="var-chip" onclick="insertVar('(tag)')">(tag)</span>
+          <span class="var-chip" onclick="insertVar('(region)')">(region)</span>
         </div>
-        <div id="previewBox" class="preview-box">
-          <span class="preview-empty">O resultado do comando aparecerá aqui...</span>
+
+        <div class="vars-section-title">Ranked</div>
+        <div class="vars-help">
+          <span class="var-chip" onclick="insertVar('(rank)')">(rank)</span>
+          <span class="var-chip" onclick="insertVar('(tier)')">(tier)</span>
+          <span class="var-chip" onclick="insertVar('(divisao)')">(divisao)</span>
+          <span class="var-chip" onclick="insertVar('(pontos)')">(pontos)</span>
+          <span class="var-chip" onclick="insertVar('(lp)')">(lp)</span>
+        </div>
+
+        <div class="vars-section-title">Estatísticas</div>
+        <div class="vars-help">
+          <span class="var-chip" onclick="insertVar('(vitorias)')">(vitorias)</span>
+          <span class="var-chip" onclick="insertVar('(derrotas)')">(derrotas)</span>
+          <span class="var-chip" onclick="insertVar('(winrate)')">(winrate)</span>
+          <span class="var-chip" onclick="insertVar('(jogos)')">(jogos)</span>
+        </div>
+        <div class="hint">Você pode usar parênteses <code>(player)</code> ou chaves <code>{player}</code> — os dois funcionam.</div>
+      </div>
+
+      <button class="btn" id="testBtn" onclick="testCommand()">
+        ▶ Testar Comando
+      </button>
+
+      <!-- resultado do teste -->
+      <div id="testResult" class="twitch-preview" style="display: none;">
+        <div class="preview-label">Como aparecerá na Twitch</div>
+        <div class="twitch-line">
+          <span class="twitch-user">Usuário</span>
+          <span class="twitch-arrow">→</span>
+          <span class="twitch-msg" id="twitchUserCmd"></span>
+        </div>
+        <div class="twitch-line">
+          <span class="twitch-user" id="twitchBotName">StreamElements</span>
+          <span class="twitch-arrow">→</span>
+          <span class="twitch-msg bot" id="twitchBotMsg"></span>
+        </div>
+
+        <hr class="twitch-divider">
+
+        <div class="preview-label">Resposta do comando (cole no StreamElements)</div>
+        <div class="copy-field">
+          <input type="text" id="customApiField" readonly onclick="this.select()">
+          <button class="copy-btn" onclick="copyCustomApi()">COPY</button>
         </div>
       </div>
 
@@ -729,59 +656,45 @@
 </div>
 
 <script>
-// Detectar URL da API automaticamente
+// API_URL vazio = mesma origem (Vercel proxy redireciona /api e /cmd para o Railway)
 const API_URL = (() => {
   const hostname = window.location.hostname;
-
-  // Desenvolvimento local
   if (hostname === 'localhost' || hostname === '127.0.0.1') {
     return 'http://localhost:3000';
   }
-
-  // Produção: string vazia = mesma origem.
-  // O Vercel (vercel.json rewrites) redireciona /api/* e /cmd/* para o Railway.
   return '';
 })();
 
-console.log(`🔗 API URL detectada: ${API_URL || '(mesma origem - Vercel proxy)'}`);
+console.log(`🔗 API URL: ${API_URL || '(mesma origem - Vercel proxy)'}`);
 
 let currentUuid = null;
-let currentMode = 'lol'; // 'lol' ou 'tft'
-
-window.addEventListener('load', () => {
-  const saved = localStorage.getItem('riot_custom_uuid');
-  if (saved) {
-    currentUuid = saved;
-    loadPlayerData(saved);
-  }
-});
+let currentMethod = 'riotid';
 
 function showAlert(message, type = 'error') {
   const box = document.getElementById('alertBox');
   box.className = `alert alert-${type} show`;
   box.textContent = message;
-  setTimeout(() => box.classList.remove('show'), 5000);
+  setTimeout(() => box.classList.remove('show'), 6000);
 }
 
-function selectMode(mode) {
-  currentMode = mode;
-  document.querySelectorAll('.mode-tab').forEach(t => {
-    t.classList.remove('active', 'tft');
-    if (t.dataset.mode === mode) {
-      t.classList.add('active');
-      if (mode === 'tft') t.classList.add('tft');
-    }
+function selectMethod(method) {
+  currentMethod = method;
+  document.querySelectorAll('.method-tab').forEach(t => {
+    t.classList.toggle('active', t.dataset.method === method);
   });
-  document.getElementById('lolQueues').classList.toggle('show', mode === 'lol');
-  document.getElementById('tftQueues').classList.toggle('show', mode === 'tft');
+  document.getElementById('panel-riotid').classList.toggle('active', method === 'riotid');
+  document.getElementById('panel-uuid').classList.toggle('active', method === 'uuid');
 }
 
-function getSelectedGameMode() {
-  if (currentMode === 'lol') return document.getElementById('lolQueueSelect').value;
-  return document.getElementById('tftQueueSelect').value;
+function lockCommandPanel(locked) {
+  document.getElementById('commandBody').classList.toggle('locked', locked);
 }
 
-async function registerPlayer() {
+// estado inicial: passo 2 bloqueado até achar um jogador
+lockCommandPanel(true);
+
+// ---- BUSCA POR NICK + TAG + REGIÃO ----
+async function searchByRiotId() {
   const gameName = document.getElementById('gameName').value.trim();
   const tagLine = document.getElementById('tagLine').value.trim().replace('#', '');
   const region = document.getElementById('region').value;
@@ -791,7 +704,7 @@ async function registerPlayer() {
     return;
   }
 
-  const btn = document.getElementById('registerBtn');
+  const btn = document.getElementById('searchRiotIdBtn');
   btn.disabled = true;
   btn.innerHTML = '<div class="spinner"></div> Buscando...';
 
@@ -801,7 +714,6 @@ async function registerPlayer() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ gameName, tagLine, region })
     });
-
     const data = await res.json();
 
     if (!res.ok) {
@@ -809,55 +721,57 @@ async function registerPlayer() {
       return;
     }
 
-    currentUuid = data.custom_uuid;
-    localStorage.setItem('riot_custom_uuid', currentUuid);
-
-    document.getElementById('uuidValue').textContent = data.custom_uuid;
-    document.getElementById('playerNameDisplay').textContent = `${data.gameName}#${data.tagLine}`;
-    document.getElementById('playerRegionDisplay').textContent = data.region.toUpperCase();
-    document.getElementById('newBadge').textContent = data.isNew ? '✨ NOVO' : '🔄 EXISTENTE';
-    document.getElementById('uuidResult').classList.add('show');
-    
-    document.getElementById('saveCmdBtn').disabled = false;
-    document.getElementById('executorSection').style.display = 'block';
-
+    onPlayerFound(data.custom_uuid, data.gameName, data.tagLine, data.region);
     showAlert(data.message, 'success');
-    loadCommands();
-
   } catch (err) {
     showAlert('Erro de conexão: ' + err.message);
   } finally {
     btn.disabled = false;
-    btn.innerHTML = '🔍 Buscar / Gerar UUID';
+    btn.innerHTML = '🔍 Buscar Jogador';
   }
 }
 
-async function loadPlayerData(uuid) {
+// ---- BUSCA POR UUID ----
+async function searchByUuid() {
+  const uuid = document.getElementById('uuidInput').value.trim();
+  if (!uuid) {
+    showAlert('Cole um UUID');
+    return;
+  }
+
+  const btn = document.getElementById('searchUuidBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<div class="spinner"></div> Buscando...';
+
   try {
     const res = await fetch(`${API_URL}/api/player/${uuid}`);
+    const data = await res.json();
+
     if (!res.ok) {
-      localStorage.removeItem('riot_custom_uuid');
+      showAlert(data.error || 'UUID não encontrado');
       return;
     }
-    const data = await res.json();
-    
-    document.getElementById('uuidValue').textContent = data.custom_uuid;
-    document.getElementById('playerNameDisplay').textContent = `${data.current_game_name}#${data.current_tag_line}`;
-    document.getElementById('playerRegionDisplay').textContent = data.region.toUpperCase();
-    document.getElementById('newBadge').textContent = '💾 SAVED';
-    document.getElementById('uuidResult').classList.add('show');
-    
-    document.getElementById('gameName').value = data.current_game_name;
-    document.getElementById('tagLine').value = data.current_tag_line;
-    document.getElementById('region').value = data.region;
-    
-    document.getElementById('saveCmdBtn').disabled = false;
-    document.getElementById('executorSection').style.display = 'block';
-    
-    loadCommands();
+
+    onPlayerFound(data.custom_uuid, data.current_game_name, data.current_tag_line, data.region);
+    showAlert('✅ Jogador encontrado', 'success');
   } catch (err) {
-    console.error(err);
+    showAlert('Erro de conexão: ' + err.message);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '🔍 Buscar por UUID';
   }
+}
+
+// ---- jogador encontrado (NÃO preenche campos automaticamente) ----
+function onPlayerFound(uuid, name, tag, region) {
+  currentUuid = uuid;
+
+  document.getElementById('pfName').textContent = `${name}#${tag}`;
+  document.getElementById('pfRegion').textContent = (region || '').toUpperCase();
+  document.getElementById('pfUuid').textContent = uuid;
+  document.getElementById('playerFound').classList.add('show');
+
+  lockCommandPanel(false);
 }
 
 function copyUuid() {
@@ -876,183 +790,86 @@ function insertVar(variable) {
   textarea.selectionStart = textarea.selectionEnd = start + variable.length;
 }
 
-async function saveCommand() {
+// ---- TESTAR COMANDO ----
+async function testCommand() {
   if (!currentUuid) {
-    showAlert('Registre um jogador primeiro');
+    showAlert('Busque um jogador primeiro');
     return;
   }
 
   const command_name = document.getElementById('commandName').value.trim();
   const template = document.getElementById('commandTemplate').value.trim();
-  const game_mode = getSelectedGameMode();
+  const game_mode = document.getElementById('queueSelect').value;
 
   if (!command_name || !template) {
     showAlert('Preencha o nome e o template do comando');
     return;
   }
 
+  const btn = document.getElementById('testBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<div class="spinner"></div> Testando...';
+
   try {
-    const res = await fetch(`${API_URL}/api/command`, {
+    // 1. salva/atualiza o comando no banco (necessário para o link funcionar)
+    const saveRes = await fetch(`${API_URL}/api/command`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ custom_uuid: currentUuid, command_name, template, game_mode })
     });
-
-    const data = await res.json();
-    if (!res.ok) {
-      showAlert(data.error);
+    const saveData = await saveRes.json();
+    if (!saveRes.ok) {
+      showAlert(saveData.error || 'Erro ao preparar o comando');
       return;
     }
 
-    showAlert('Comando salvo!', 'success');
-    document.getElementById('commandName').value = '';
-    document.getElementById('commandTemplate').value = '';
-    loadCommands();
+    // 2. executa o comando para ver o resultado renderizado
+    const runRes = await fetch(`${API_URL}/api/command/${currentUuid}/${command_name}`);
+    const runData = await runRes.json();
+    if (!runRes.ok) {
+      showAlert(runData.error || 'Erro ao testar o comando');
+      return;
+    }
+
+    showTestResult(command_name, runData.result);
   } catch (err) {
     showAlert('Erro: ' + err.message);
-  }
-}
-
-function getModeLabel(mode) {
-  const labels = {
-    'lol_solo': 'LoL Solo',
-    'lol_flex': 'LoL Flex',
-    'tft': 'TFT',
-    'tft_double_up': 'TFT Duo',
-    'tft_turbo': 'TFT Turbo'
-  };
-  return labels[mode] || mode;
-}
-
-function getModeClass(mode) {
-  return mode.startsWith('tft') ? 'tft' : 'lol';
-}
-
-async function loadCommands() {
-  if (!currentUuid) return;
-
-  try {
-    const res = await fetch(`${API_URL}/api/commands/${currentUuid}`);
-    const commands = await res.json();
-    
-    const list = document.getElementById('queueList');
-    document.getElementById('queueCount').textContent = `${commands.length} ITEM${commands.length !== 1 ? 'S' : ''}`;
-
-    if (commands.length === 0) {
-      list.innerHTML = `
-        <div class="empty-state">
-          <div class="empty-state-icon">🎵</div>
-          Nenhum comando cadastrado. Crie seu primeiro acima!
-        </div>`;
-      return;
-    }
-
-    list.innerHTML = commands.map((cmd, i) => `
-      <div class="queue-item">
-        <div class="queue-number">${String(i + 1).padStart(2, '0')}</div>
-        <div class="queue-content">
-          <div class="queue-name-row">
-            <span class="queue-name">!${cmd.command_name}</span>
-            <span class="mode-tag ${getModeClass(cmd.game_mode || 'lol_solo')}">${getModeLabel(cmd.game_mode || 'lol_solo')}</span>
-          </div>
-          <div class="queue-template">${escapeHtml(cmd.template)}</div>
-        </div>
-        <div class="queue-actions">
-          <button class="icon-btn" onclick="copyApiLink('${cmd.command_name}')" title="Copiar link da API (StreamElements)">🔗</button>
-          <button class="icon-btn" onclick="testCommand('${cmd.command_name}')" title="Testar">▶</button>
-          <button class="icon-btn delete" onclick="deleteCommand('${cmd.command_name}')" title="Deletar">✕</button>
-        </div>
-      </div>
-    `).join('');
-  } catch (err) {
-    console.error(err);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '▶ Testar Comando';
   }
 }
 
 function escapeHtml(s) {
-  return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  return (s || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
 
-function copyApiLink(commandName) {
-  if (!currentUuid) {
-    showAlert('Registre um jogador primeiro');
-    return;
-  }
-  // Link de texto puro para StreamElements / Nightbot / Streamlabs
-  const base = window.location.origin;
-  const link = `${base}/cmd/${currentUuid}/${commandName}`;
-  navigator.clipboard.writeText(link);
-  showAlert('🔗 Link copiado! Use no StreamElements com $(urlfetch ' + link + ')', 'success');
+function showTestResult(commandName, resultText) {
+  // linha 1: o que o usuário digita na twitch
+  document.getElementById('twitchUserCmd').textContent = `!${commandName}`;
+  // linha 2: o que o bot responde
+  document.getElementById('twitchBotMsg').textContent = resultText;
+
+  // campo de copiar: $(customapi LINK)
+  const link = `${window.location.origin}/cmd/${currentUuid}/${commandName}`;
+  const fullCommand = `$(customapi ${link})`;
+  document.getElementById('customApiField').value = fullCommand;
+
+  document.getElementById('testResult').style.display = 'block';
 }
 
-function testCommand(name) {
-  document.getElementById('execCommand').value = name;
-  executeCommand();
+function copyCustomApi() {
+  const field = document.getElementById('customApiField');
+  navigator.clipboard.writeText(field.value);
+  showAlert('🔗 Comando copiado! Cole na resposta do comando no StreamElements', 'success');
 }
 
-async function executeCommand() {
-  if (!currentUuid) return;
-  
-  const name = document.getElementById('execCommand').value.trim();
-  if (!name) {
-    showAlert('Digite o nome do comando');
-    return;
-  }
-
-  const preview = document.getElementById('previewBox');
-  preview.innerHTML = '<div class="spinner" style="border-top-color: var(--accent);"></div>';
-
-  try {
-    const res = await fetch(`${API_URL}/api/command/${currentUuid}/${name}`);
-    const data = await res.json();
-    
-    if (!res.ok) {
-      preview.innerHTML = `<span style="color: var(--danger);">⚠ ${data.error}</span>`;
-      return;
-    }
-
-    const modeTag = data.game_mode ? `<span class="mode-tag ${getModeClass(data.game_mode)}" style="margin-right: 10px;">${getModeLabel(data.game_mode)}</span>` : '';
-    
-    // Link de texto puro para StreamElements
-    const apiLink = `${window.location.origin}/cmd/${currentUuid}/${name}`;
-    
-    preview.innerHTML = `
-      <div style="width: 100%;">
-        <div style="margin-bottom: 12px;">
-          ${modeTag}<span style="color: var(--success); margin-right: 8px;">▶</span>${escapeHtml(data.result)}
-        </div>
-        <div style="border-top: 1px solid var(--border); padding-top: 10px;">
-          <div style="font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-muted); margin-bottom: 6px; font-weight: 700;">
-            🔗 Link da API (StreamElements / Nightbot)
-          </div>
-          <div style="display: flex; gap: 8px; align-items: center;">
-            <input type="text" readonly value="${apiLink}" 
-              style="flex: 1; font-size: 11px; padding: 6px 10px; background: var(--bg-secondary);"
-              onclick="this.select()">
-            <button class="copy-btn" onclick="copyApiLink('${name}')">COPY</button>
-          </div>
-        </div>
-      </div>
-    `;
-  } catch (err) {
-    preview.innerHTML = `<span style="color: var(--danger);">${err.message}</span>`;
-  }
-}
-
-async function deleteCommand(name) {
-  if (!confirm(`Deletar comando "${name}"?`)) return;
-
-  try {
-    await fetch(`${API_URL}/api/command/${currentUuid}/${name}`, { method: 'DELETE' });
-    showAlert('Comando deletado', 'success');
-    loadCommands();
-  } catch (err) {
-    showAlert(err.message);
-  }
-}
-
+// Enter dispara a busca
 document.getElementById('tagLine').addEventListener('keypress', e => {
-  if (e.key === 'Enter') registerPlayer();
+  if (e.key === 'Enter') searchByRiotId();
+});
+document.getElementById('uuidInput').addEventListener('keypress', e => {
+  if (e.key === 'Enter') searchByUuid();
 });
 </script>
 </body>
