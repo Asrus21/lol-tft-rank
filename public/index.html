@@ -8,471 +8,142 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Outfit:wght@300;500;700;900&display=swap" rel="stylesheet">
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+  *{margin:0;padding:0;box-sizing:border-box}
 
-  :root {
-    --bg-primary: #0a0a0f;
-    --bg-secondary: #12121a;
-    --bg-card: #1a1a26;
-    --bg-elevated: #232333;
-    --accent: #a78bfa;
-    --accent-hot: #f472b6;
-    --accent-cool: #60a5fa;
-    --success: #34d399;
-    --warning: #fbbf24;
-    --danger: #f87171;
-    --text-primary: #f5f5fa;
-    --text-secondary: #9999b3;
-    --text-muted: #5c5c75;
-    --border: #2a2a3a;
-    --border-light: #3a3a4f;
+  :root{
+    --bg-primary:#0a0a0f;
+    --bg-secondary:#12121a;
+    --bg-card:#1a1a26;
+    --bg-elevated:#232333;
+    --accent:#a78bfa;
+    --accent-hot:#f472b6;
+    --accent-cool:#60a5fa;
+    --success:#34d399;
+    --warning:#fbbf24;
+    --danger:#f87171;
+    --text-primary:#f5f5fa;
+    --text-secondary:#9999b3;
+    --text-muted:#5c5c75;
+    --border:#2a2a3a;
+    --border-light:#3a3a4f;
   }
 
-  html, body {
-    font-family: 'Outfit', sans-serif;
-    background: var(--bg-primary);
-    color: var(--text-primary);
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
+  html,body{font-family:'Outfit',sans-serif;background:var(--bg-primary);color:var(--text-primary);min-height:100vh;overflow-x:hidden}
 
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background:
-      radial-gradient(circle at 15% 20%, rgba(167, 139, 250, 0.12), transparent 40%),
-      radial-gradient(circle at 85% 80%, rgba(244, 114, 182, 0.08), transparent 40%);
-    pointer-events: none;
-    z-index: 0;
-  }
+  body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle at 15% 20%,rgba(167,139,250,.12),transparent 40%),radial-gradient(circle at 85% 80%,rgba(244,114,182,.08),transparent 40%);pointer-events:none;z-index:0}
 
-  .container {
-    position: relative;
-    z-index: 1;
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 24px;
-  }
+  .container{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:24px}
 
   /* HEADER */
-  .header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 18px 24px;
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    margin-bottom: 20px;
-  }
+  .header{display:flex;justify-content:space-between;align-items:center;padding:18px 24px;background:var(--bg-card);border:1px solid var(--border);border-radius:14px;margin-bottom:20px;gap:14px;flex-wrap:wrap}
+  .logo{display:flex;align-items:center;gap:12px;font-weight:900;font-size:18px;letter-spacing:-.5px}
+  .logo-icon{width:36px;height:36px;background:linear-gradient(135deg,var(--accent),var(--accent-hot));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 4px 16px rgba(167,139,250,.35)}
+  .logo-sub{font-size:11px;color:var(--text-muted);font-weight:400;letter-spacing:1px;text-transform:uppercase}
 
-  .logo {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    font-weight: 900;
-    font-size: 18px;
-    letter-spacing: -0.5px;
-  }
+  .header-right{display:flex;align-items:center;gap:10px}
 
-  .logo-icon {
-    width: 36px;
-    height: 36px;
-    background: linear-gradient(135deg, var(--accent), var(--accent-hot));
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 18px;
-    box-shadow: 0 4px 16px rgba(167, 139, 250, 0.35);
-  }
+  .home-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;background:var(--bg-elevated);border:1px solid var(--border-light);color:var(--text-secondary);border-radius:20px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;text-decoration:none;transition:all .2s}
+  .home-btn:hover{border-color:var(--accent);color:var(--accent)}
 
-  .logo-sub {
-    font-size: 11px;
-    color: var(--text-muted);
-    font-weight: 400;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-  }
+  .lang-switch{display:flex;background:var(--bg-elevated);border:1px solid var(--border-light);border-radius:20px;padding:3px;gap:2px}
+  .lang-btn{padding:5px 10px;font-size:11px;font-weight:700;background:transparent;border:none;color:var(--text-muted);cursor:pointer;border-radius:14px;letter-spacing:1px;font-family:'JetBrains Mono',monospace;transition:all .2s}
+  .lang-btn.active{background:var(--accent);color:#fff}
 
-  .status-pill {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 6px 14px;
-    background: var(--bg-elevated);
-    border: 1px solid var(--border-light);
-    border-radius: 20px;
-    font-size: 12px;
-    color: var(--text-secondary);
-    font-family: 'JetBrains Mono', monospace;
-  }
+  .status-pill{display:flex;align-items:center;gap:8px;padding:6px 14px;background:var(--bg-elevated);border:1px solid var(--border-light);border-radius:20px;font-size:12px;color:var(--text-secondary);font-family:'JetBrains Mono',monospace}
+  .status-dot{width:8px;height:8px;background:var(--success);border-radius:50%;box-shadow:0 0 8px var(--success);animation:pulse 2s ease-in-out infinite}
+  @keyframes pulse{50%{opacity:.5}}
 
-  .status-dot {
-    width: 8px;
-    height: 8px;
-    background: var(--success);
-    border-radius: 50%;
-    box-shadow: 0 0 8px var(--success);
-    animation: pulse 2s ease-in-out infinite;
-  }
-
-  @keyframes pulse { 50% { opacity: 0.5; } }
+  /* HERO */
+  .hero{text-align:center;padding:24px 16px 8px}
+  .hero-title{font-size:32px;font-weight:900;letter-spacing:-1px;margin-bottom:10px;background:linear-gradient(135deg,var(--accent),var(--accent-hot));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;line-height:1.15}
+  .hero-desc{font-size:15px;color:var(--text-secondary);max-width:640px;margin:0 auto;line-height:1.55}
 
   /* PANELS */
-  .panel {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    overflow: hidden;
-    margin-bottom: 20px;
-  }
-
-  .panel-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 18px 22px;
-    background: var(--bg-secondary);
-    border-bottom: 1px solid var(--border);
-  }
-
-  .panel-title {
-    font-size: 14px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-    color: var(--text-secondary);
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .panel-title::before {
-    content: '';
-    width: 4px;
-    height: 16px;
-    background: linear-gradient(180deg, var(--accent), var(--accent-hot));
-    border-radius: 2px;
-  }
-
-  .panel-badge {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
-    color: var(--text-muted);
-    padding: 4px 8px;
-    background: var(--bg-elevated);
-    border-radius: 6px;
-  }
-
-  .panel-body { padding: 22px; }
+  .panel{background:var(--bg-card);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:20px}
+  .panel-header{display:flex;justify-content:space-between;align-items:center;padding:18px 22px;background:var(--bg-secondary);border-bottom:1px solid var(--border)}
+  .panel-title{font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-secondary);display:flex;align-items:center;gap:10px}
+  .panel-title::before{content:'';width:4px;height:16px;background:linear-gradient(180deg,var(--accent),var(--accent-hot));border-radius:2px}
+  .panel-badge{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-muted);padding:4px 8px;background:var(--bg-elevated);border-radius:6px}
+  .panel-body{padding:22px}
 
   /* FORM */
-  .form-group { margin-bottom: 16px; }
+  .form-group{margin-bottom:16px}
+  .form-row{display:grid;grid-template-columns:2fr 1fr;gap:12px}
+  label{display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--text-muted);margin-bottom:6px}
+  input,select,textarea{width:100%;padding:12px 14px;background:var(--bg-elevated);border:1px solid var(--border-light);border-radius:8px;color:var(--text-primary);font-family:'Outfit',sans-serif;font-size:14px;transition:all .2s}
+  input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent);background:var(--bg-secondary);box-shadow:0 0 0 3px rgba(167,139,250,.15)}
+  textarea{resize:vertical;min-height:80px;font-family:'JetBrains Mono',monospace;font-size:13px}
 
-  .form-row {
-    display: grid;
-    grid-template-columns: 2fr 1fr;
-    gap: 12px;
-  }
+  /* TABS de método */
+  .method-tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:18px;padding:4px;background:var(--bg-elevated);border-radius:10px;border:1px solid var(--border-light)}
+  .method-tab{padding:10px;text-align:center;border-radius:7px;cursor:pointer;font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:1px;color:var(--text-secondary);transition:all .2s}
+  .method-tab:hover{color:var(--text-primary)}
+  .method-tab.active{background:linear-gradient(135deg,var(--accent),var(--accent-hot));color:#fff;box-shadow:0 2px 12px rgba(167,139,250,.3)}
+  .method-panel{display:none}
+  .method-panel.active{display:block}
 
-  label {
-    display: block;
-    font-size: 11px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1.2px;
-    color: var(--text-muted);
-    margin-bottom: 6px;
-  }
+  /* BOTÃO */
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 20px;background:linear-gradient(135deg,var(--accent),var(--accent-hot));color:#fff;border:none;border-radius:8px;font-family:'Outfit',sans-serif;font-weight:700;font-size:14px;cursor:pointer;transition:all .2s;text-transform:uppercase;letter-spacing:.8px;width:100%}
+  .btn:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(167,139,250,.3)}
+  .btn:active{transform:translateY(0)}
+  .btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
 
-  input, select, textarea {
-    width: 100%;
-    padding: 12px 14px;
-    background: var(--bg-elevated);
-    border: 1px solid var(--border-light);
-    border-radius: 8px;
-    color: var(--text-primary);
-    font-family: 'Outfit', sans-serif;
-    font-size: 14px;
-    transition: all 0.2s;
-  }
+  /* RESULTADO BUSCA */
+  .player-found{background:linear-gradient(135deg,rgba(167,139,250,.12),rgba(244,114,182,.08));border:1px solid var(--accent);border-radius:10px;padding:16px;margin-top:16px;display:none}
+  .player-found.show{display:block;animation:slideIn .3s ease-out}
+  @keyframes slideIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+  .player-found-label{font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:var(--accent);margin-bottom:8px;font-weight:700}
+  .player-found-info{display:flex;gap:16px;font-size:14px;color:var(--text-secondary);flex-wrap:wrap}
+  .player-found-info strong{color:var(--text-primary)}
+  .uuid-code{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-primary);word-break:break-all;padding:10px 12px;background:var(--bg-primary);border-radius:6px;border:1px solid var(--border);margin-top:10px;display:flex;justify-content:space-between;align-items:center;gap:10px}
+  .uuid-label{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-muted);margin-top:10px;margin-bottom:4px;font-weight:700}
 
-  input:focus, select:focus, textarea:focus {
-    outline: none;
-    border-color: var(--accent);
-    background: var(--bg-secondary);
-    box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.15);
-  }
-
-  textarea {
-    resize: vertical;
-    min-height: 80px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 13px;
-  }
-
-  /* TABS de método de busca */
-  .method-tabs {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-    margin-bottom: 18px;
-    padding: 4px;
-    background: var(--bg-elevated);
-    border-radius: 10px;
-    border: 1px solid var(--border-light);
-  }
-
-  .method-tab {
-    padding: 10px;
-    text-align: center;
-    border-radius: 7px;
-    cursor: pointer;
-    font-weight: 700;
-    font-size: 12px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    color: var(--text-secondary);
-    transition: all 0.2s;
-  }
-
-  .method-tab:hover { color: var(--text-primary); }
-
-  .method-tab.active {
-    background: linear-gradient(135deg, var(--accent), var(--accent-hot));
-    color: #fff;
-    box-shadow: 0 2px 12px rgba(167, 139, 250, 0.3);
-  }
-
-  .method-panel { display: none; }
-  .method-panel.active { display: block; }
-
-  /* BOTÕES */
-  .btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    padding: 12px 20px;
-    background: linear-gradient(135deg, var(--accent), var(--accent-hot));
-    color: #fff;
-    border: none;
-    border-radius: 8px;
-    font-family: 'Outfit', sans-serif;
-    font-weight: 700;
-    font-size: 14px;
-    cursor: pointer;
-    transition: all 0.2s;
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
-    width: 100%;
-  }
-
-  .btn:hover { transform: translateY(-1px); box-shadow: 0 8px 20px rgba(167, 139, 250, 0.3); }
-  .btn:active { transform: translateY(0); }
-  .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-
-  .btn-sm { padding: 12px 20px; font-size: 13px; width: auto; }
-
-  /* RESULTADO DA BUSCA */
-  .player-found {
-    background: linear-gradient(135deg, rgba(167, 139, 250, 0.12), rgba(244, 114, 182, 0.08));
-    border: 1px solid var(--accent);
-    border-radius: 10px;
-    padding: 16px;
-    margin-top: 16px;
-    display: none;
-  }
-  .player-found.show { display: block; animation: slideIn 0.3s ease-out; }
-
-  @keyframes slideIn {
-    from { opacity: 0; transform: translateY(-8px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  .player-found-label {
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-    color: var(--accent);
-    margin-bottom: 8px;
-    font-weight: 700;
-  }
-
-  .player-found-info {
-    display: flex;
-    gap: 16px;
-    font-size: 14px;
-    color: var(--text-secondary);
-    flex-wrap: wrap;
-  }
-  .player-found-info strong { color: var(--text-primary); }
-
-  .uuid-code {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 12px;
-    color: var(--text-primary);
-    word-break: break-all;
-    padding: 10px 12px;
-    background: var(--bg-primary);
-    border-radius: 6px;
-    border: 1px solid var(--border);
-    margin-top: 10px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .copy-btn {
-    background: transparent;
-    border: 1px solid var(--border-light);
-    color: var(--text-secondary);
-    padding: 5px 12px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 11px;
-    font-family: 'JetBrains Mono', monospace;
-    transition: all 0.2s;
-    flex-shrink: 0;
-  }
-  .copy-btn:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .copy-btn{background:transparent;border:1px solid var(--border-light);color:var(--text-secondary);padding:5px 12px;border-radius:4px;cursor:pointer;font-size:11px;font-family:'JetBrains Mono',monospace;transition:all .2s;flex-shrink:0}
+  .copy-btn:hover{background:var(--accent);color:#fff;border-color:var(--accent)}
 
   /* VARIÁVEIS */
-  .vars-section-title {
-    font-size: 10px;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-    color: var(--text-muted);
-    margin-top: 10px;
-    margin-bottom: 4px;
-    font-weight: 700;
-  }
+  .vars-section-title{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-muted);margin-top:10px;margin-bottom:4px;font-weight:700}
+  .vars-help{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+  .var-chip{font-family:'JetBrains Mono',monospace;font-size:11px;padding:4px 10px;background:var(--bg-elevated);border:1px solid var(--border-light);border-radius:4px;color:var(--accent-cool);cursor:pointer;transition:all .15s}
+  .var-chip:hover{border-color:var(--accent);color:var(--accent);background:var(--bg-primary)}
 
-  .vars-help {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    margin-top: 6px;
-  }
+  .locked{opacity:.4;pointer-events:none}
 
-  .var-chip {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
-    padding: 4px 10px;
-    background: var(--bg-elevated);
-    border: 1px solid var(--border-light);
-    border-radius: 4px;
-    color: var(--accent-cool);
-    cursor: pointer;
-    transition: all 0.15s;
-  }
-  .var-chip:hover { border-color: var(--accent); color: var(--accent); background: var(--bg-primary); }
+  /* PREVIEW TWITCH */
+  .twitch-preview{background:var(--bg-primary);border:1px solid var(--border);border-radius:10px;padding:16px;margin-top:14px}
+  .twitch-line{display:flex;gap:8px;align-items:baseline;font-size:14px;margin-bottom:10px;flex-wrap:wrap}
+  .twitch-line:last-child{margin-bottom:0}
+  .twitch-user{font-weight:700;color:var(--accent-cool);font-size:14px}
+  .twitch-arrow{color:var(--text-muted)}
+  .twitch-msg{color:var(--text-primary)}
+  .twitch-msg.bot{color:var(--success);font-family:'JetBrains Mono',monospace;font-size:13px}
+  .twitch-divider{border:none;border-top:1px dashed var(--border-light);margin:12px 0}
 
-  /* DISABLED OVERLAY */
-  .locked { opacity: 0.4; pointer-events: none; }
+  .preview-label{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-muted);margin-bottom:8px;font-weight:700}
 
-  /* PREVIEW DE TWITCH */
-  .twitch-preview {
-    background: var(--bg-primary);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 16px;
-    margin-top: 14px;
-  }
+  .copy-field{display:flex;gap:8px;align-items:center;margin-top:6px}
+  .copy-field input{flex:1;font-size:11px;padding:8px 10px;background:var(--bg-secondary);font-family:'JetBrains Mono',monospace}
 
-  .twitch-line {
-    display: flex;
-    gap: 8px;
-    align-items: baseline;
-    font-size: 14px;
-    margin-bottom: 10px;
-    flex-wrap: wrap;
-  }
-  .twitch-line:last-child { margin-bottom: 0; }
-
-  .twitch-user {
-    font-weight: 700;
-    color: var(--accent-cool);
-    font-size: 14px;
-  }
-
-  .twitch-arrow { color: var(--text-muted); }
-
-  .twitch-msg { color: var(--text-primary); }
-
-  .twitch-msg.bot {
-    color: var(--success);
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 13px;
-  }
-
-  .twitch-divider {
-    border: none;
-    border-top: 1px dashed var(--border-light);
-    margin: 12px 0;
-  }
-
-  .preview-label {
-    font-size: 10px;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-    color: var(--text-muted);
-    margin-bottom: 8px;
-    font-weight: 700;
-  }
-
-  /* CAMPO COPIAR */
-  .copy-field {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-    margin-top: 6px;
-  }
-  .copy-field input {
-    flex: 1;
-    font-size: 11px;
-    padding: 8px 10px;
-    background: var(--bg-secondary);
-    font-family: 'JetBrains Mono', monospace;
-  }
-
-  /* ALERTS */
-  .alert {
-    padding: 12px 16px;
-    border-radius: 8px;
-    margin-bottom: 16px;
-    font-size: 13px;
-    display: none;
-    align-items: center;
-    gap: 10px;
-  }
-  .alert.show { display: flex; }
-  .alert-error { background: rgba(248, 113, 113, 0.1); border: 1px solid var(--danger); color: var(--danger); }
-  .alert-success { background: rgba(52, 211, 153, 0.1); border: 1px solid var(--success); color: var(--success); }
+  .hint{font-size:12px;color:var(--text-muted);margin-top:6px;line-height:1.5}
+  .hint code{font-family:'JetBrains Mono',monospace;background:var(--bg-elevated);padding:1px 6px;border-radius:4px;font-size:11px;color:var(--accent-cool)}
 
   /* SPINNER */
-  .spinner {
-    width: 14px;
-    height: 14px;
-    border: 2px solid rgba(255,255,255,0.2);
-    border-top-color: #fff;
-    border-radius: 50%;
-    animation: spin 0.6s linear infinite;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
+  .spinner{width:14px;height:14px;border:2px solid rgba(255,255,255,.2);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
 
-  .hint {
-    font-size: 12px;
-    color: var(--text-muted);
-    margin-top: 6px;
-    line-height: 1.5;
-  }
+  /* ALERT toast */
+  .alert{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);padding:12px 20px;border-radius:8px;font-size:13px;font-weight:600;z-index:1000;box-shadow:0 8px 24px rgba(0,0,0,.4);transition:opacity .3s;max-width:90%;text-align:center}
+  .alert.info{background:rgba(167,139,250,.15);border:1px solid var(--accent);color:var(--accent)}
+  .alert.success{background:rgba(52,211,153,.15);border:1px solid var(--success);color:var(--success)}
+  .alert.error{background:rgba(248,113,113,.15);border:1px solid var(--danger);color:var(--danger)}
 
-  @media (max-width: 640px) {
-    .form-row { grid-template-columns: 1fr; }
+  /* DISCLAIMER */
+  .disclaimer{margin-top:24px;padding:14px 18px;background:var(--bg-card);border:1px solid var(--border);border-radius:10px;font-size:11px;color:var(--text-muted);line-height:1.6;text-align:center}
+
+  @media (max-width:640px){
+    .form-row{grid-template-columns:1fr}
+    .hero-title{font-size:24px}
+    .header{flex-direction:column;align-items:flex-start}
   }
 </style>
 </head>
@@ -484,51 +155,58 @@
     <div class="logo">
       <div class="logo-icon">⚔️</div>
       <div>
-        Rank LoL
-        <div class="logo-sub">League of Legends · Custom Commands</div>
+        <span data-i18n="brand">Rank LoL</span>
+        <div class="logo-sub" data-i18n="brand_sub">League of Legends · Custom Commands</div>
       </div>
     </div>
-    <div class="status-pill">
-      <div class="status-dot"></div>
-      ONLINE
+    <div class="header-right">
+      <a href="/portifolio" class="home-btn" title="Portfólio">← <span data-i18n="home">Portfólio</span></a>
+      <div class="lang-switch">
+        <button class="lang-btn active" data-lang="pt" onclick="setLang('pt')">PT</button>
+        <button class="lang-btn" data-lang="en" onclick="setLang('en')">EN</button>
+      </div>
+      <div class="status-pill"><div class="status-dot"></div>ONLINE</div>
     </div>
+  </div>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-title" data-i18n="hero_title">Rank LoL</div>
+    <div class="hero-desc" data-i18n="hero_desc">Comandos customizados para exibir o seu rank de League of Legends em tempo real na Twitch</div>
   </div>
 
   <!-- PASSO 1: BUSCAR JOGADOR -->
   <div class="panel">
     <div class="panel-header">
-      <div class="panel-title">Buscar Jogador</div>
-      <div class="panel-badge">PASSO 01</div>
+      <div class="panel-title" data-i18n="search_title">Buscar Jogador</div>
+      <div class="panel-badge" data-i18n="step01">PASSO 01</div>
     </div>
     <div class="panel-body">
 
-      <div id="alertBox" class="alert"></div>
-
-      <!-- escolha do método -->
       <div class="method-tabs">
-        <div class="method-tab active" data-method="riotid" onclick="selectMethod('riotid')">Nick + Tag</div>
-        <div class="method-tab" data-method="uuid" onclick="selectMethod('uuid')">UUID</div>
+        <div class="method-tab active" data-method="riotid" onclick="selectMethod('riotid')"><span data-i18n="m_nicktag">Nick + Tag</span></div>
+        <div class="method-tab" data-method="puuid" onclick="selectMethod('puuid')">PUUID</div>
       </div>
 
       <!-- método: nick + tag + região -->
       <div class="method-panel active" id="panel-riotid">
         <div class="form-row">
           <div class="form-group">
-            <label>Game Name</label>
+            <label data-i18n="lbl_nick">Nick</label>
             <input type="text" id="gameName" placeholder="ex: asrus" autocomplete="off">
           </div>
           <div class="form-group">
-            <label>Tag</label>
+            <label data-i18n="lbl_tag">Tag</label>
             <input type="text" id="tagLine" placeholder="ex: BR1" autocomplete="off">
           </div>
         </div>
         <div class="form-group">
-          <label>Região</label>
+          <label data-i18n="lbl_region">Região</label>
           <select id="region">
             <option value="br1">BR1 — Brasil</option>
             <option value="na1">NA1 — North America</option>
             <option value="euw1">EUW1 — Europe West</option>
-            <option value="eun1">EUN1 — Europe Nordic & East</option>
+            <option value="eun1">EUN1 — Europe Nordic &amp; East</option>
             <option value="kr">KR — Korea</option>
             <option value="jp1">JP1 — Japan</option>
             <option value="la1">LA1 — Latin America North</option>
@@ -539,32 +217,33 @@
           </select>
         </div>
         <button class="btn" id="searchRiotIdBtn" onclick="searchByRiotId()">
-          🔍 Buscar Jogador
+          <span data-i18n="btn_search">🔍 Buscar Jogador</span>
         </button>
       </div>
 
-      <!-- método: uuid -->
-      <div class="method-panel" id="panel-uuid">
+      <!-- método: puuid -->
+      <div class="method-panel" id="panel-puuid">
         <div class="form-group">
-          <label>UUID Customizado</label>
-          <input type="text" id="uuidInput" placeholder="ex: 4270c04e-529b-4d07-8949-519923fc1828" autocomplete="off">
-          <div class="hint">Cole o UUID que você já gerou anteriormente.</div>
+          <label>PUUID</label>
+          <input type="text" id="puuidInput" placeholder="ex: Z9YJFowsnYTMkRbR..." autocomplete="off">
+          <div class="hint" data-i18n="hint_puuid">Cole o PUUID já obtido anteriormente. Você pode encontrá-lo no link gerado: <code>/cmd/lol/PUUID?msg=...</code></div>
         </div>
-        <button class="btn" id="searchUuidBtn" onclick="searchByUuid()">
-          🔍 Buscar por UUID
+        <button class="btn" id="searchPuuidBtn" onclick="searchByPuuid()">
+          <span data-i18n="btn_search_puuid">🔍 Buscar por PUUID</span>
         </button>
       </div>
 
       <!-- resultado -->
       <div id="playerFound" class="player-found">
-        <div class="player-found-label">✓ Jogador encontrado</div>
+        <div class="player-found-label">✓ <span data-i18n="player_found">Jogador encontrado</span></div>
         <div class="player-found-info">
           <span>👤 <strong id="pfName"></strong></span>
           <span>🌎 <strong id="pfRegion"></strong></span>
         </div>
+        <div class="uuid-label">PUUID</div>
         <div class="uuid-code">
-          <span id="pfUuid"></span>
-          <button class="copy-btn" onclick="copyUuid()">COPY UUID</button>
+          <span id="pfPuuid"></span>
+          <button class="copy-btn" onclick="copyPuuid()">COPY</button>
         </div>
       </div>
 
@@ -574,37 +253,31 @@
   <!-- PASSO 2: MONTAR E TESTAR COMANDO -->
   <div class="panel" id="commandPanel">
     <div class="panel-header">
-      <div class="panel-title">Montar &amp; Testar Comando</div>
-      <div class="panel-badge">PASSO 02</div>
+      <div class="panel-title" data-i18n="cmd_title">Montar &amp; Testar Comando</div>
+      <div class="panel-badge" data-i18n="step02">PASSO 02</div>
     </div>
     <div class="panel-body" id="commandBody">
 
-      <div class="form-row">
-        <div class="form-group">
-          <label>Nome do Comando</label>
-          <input type="text" id="commandName" placeholder="ex: elo, rank, pdl" autocomplete="off">
-        </div>
-        <div class="form-group">
-          <label>Fila</label>
-          <select id="queueSelect">
-            <option value="lol_solo">Ranked Solo/Duo</option>
-            <option value="lol_flex">Ranked Flex</option>
-          </select>
-        </div>
+      <div class="form-group">
+        <label data-i18n="lbl_queue">Fila</label>
+        <select id="queueSelect">
+          <option value="lol_solo" data-i18n="q_solo">Ranked Solo/Duo</option>
+          <option value="lol_flex" data-i18n="q_flex">Ranked Flex</option>
+        </select>
       </div>
 
       <div class="form-group">
-        <label>Template da Resposta</label>
+        <label data-i18n="lbl_template">Template da Resposta</label>
         <textarea id="commandTemplate" placeholder="ex: (player) está (rank) com (pontos) pontos."></textarea>
 
-        <div class="vars-section-title">Geral</div>
+        <div class="vars-section-title" data-i18n="vars_general">Geral</div>
         <div class="vars-help">
           <span class="var-chip" onclick="insertVar('(player)')">(player)</span>
           <span class="var-chip" onclick="insertVar('(tag)')">(tag)</span>
           <span class="var-chip" onclick="insertVar('(region)')">(region)</span>
         </div>
 
-        <div class="vars-section-title">Ranked</div>
+        <div class="vars-section-title" data-i18n="vars_ranked">Ranked</div>
         <div class="vars-help">
           <span class="var-chip" onclick="insertVar('(rank)')">(rank)</span>
           <span class="var-chip" onclick="insertVar('(tier)')">(tier)</span>
@@ -613,100 +286,229 @@
           <span class="var-chip" onclick="insertVar('(lp)')">(lp)</span>
         </div>
 
-        <div class="vars-section-title">Estatísticas</div>
+        <div class="vars-section-title" data-i18n="vars_stats">Estatísticas</div>
         <div class="vars-help">
           <span class="var-chip" onclick="insertVar('(vitorias)')">(vitorias)</span>
           <span class="var-chip" onclick="insertVar('(derrotas)')">(derrotas)</span>
           <span class="var-chip" onclick="insertVar('(winrate)')">(winrate)</span>
           <span class="var-chip" onclick="insertVar('(jogos)')">(jogos)</span>
         </div>
-        <div class="hint">Você pode usar parênteses <code>(player)</code> ou chaves <code>{player}</code> — os dois funcionam.</div>
+        <div class="hint" data-i18n="hint_syntax">Você pode usar parênteses <code>(player)</code> ou chaves <code>{player}</code> — os dois funcionam.</div>
       </div>
 
       <button class="btn" id="testBtn" onclick="testCommand()">
-        ▶ Testar Comando
+        <span data-i18n="btn_test">▶ Testar Comando</span>
       </button>
 
       <!-- resultado do teste -->
-      <div id="testResult" class="twitch-preview" style="display: none;">
-        <div class="preview-label">Como aparecerá na Twitch</div>
+      <div id="testResult" class="twitch-preview" style="display:none">
+        <div class="preview-label" data-i18n="preview_label">Como aparecerá na Twitch</div>
         <div class="twitch-line">
-          <span class="twitch-user">Usuário</span>
+          <span class="twitch-user" data-i18n="t_user">Usuário</span>
           <span class="twitch-arrow">→</span>
           <span class="twitch-msg" id="twitchUserCmd"></span>
         </div>
         <div class="twitch-line">
-          <span class="twitch-user" id="twitchBotName">StreamElements</span>
+          <span class="twitch-user">StreamElements</span>
           <span class="twitch-arrow">→</span>
           <span class="twitch-msg bot" id="twitchBotMsg"></span>
         </div>
 
         <hr class="twitch-divider">
 
-        <div class="preview-label">Resposta do comando (cole no StreamElements)</div>
+        <div class="preview-label" data-i18n="cmd_se">Resposta do comando (cole no StreamElements)</div>
         <div class="copy-field">
           <input type="text" id="customApiField" readonly onclick="this.select()">
           <button class="copy-btn" onclick="copyCustomApi()">COPY</button>
+        </div>
+
+        <div class="hint" style="margin-top:10px">
+          <span data-i18n="hint_view">💡 Você também pode visualizar a resposta pronta diretamente no navegador:</span>
+          <div class="copy-field" style="margin-top:6px">
+            <input type="text" id="webViewLink" readonly onclick="this.select()">
+            <button class="copy-btn" onclick="copyWebView()">COPY</button>
+          </div>
         </div>
       </div>
 
     </div>
   </div>
 
+  <!-- DISCLAIMER -->
+  <div class="disclaimer">
+    asrus.app isn't endorsed by Riot Games and doesn't reflect the views or opinions of Riot Games or anyone officially involved in producing or managing Riot Games properties. Riot Games and all associated properties are trademarks or registered trademarks of Riot Games, Inc.
+  </div>
+
 </div>
 
 <script>
-// API_URL vazio = mesma origem (Vercel proxy redireciona /api e /cmd para o Railway)
+// ============================================
+// CONFIG
+// ============================================
 const API_URL = (() => {
   const hostname = window.location.hostname;
-  if (hostname === 'localhost' || hostname === '127.0.0.1') {
-    return 'http://localhost:3000';
-  }
+  if (hostname === 'localhost' || hostname === '127.0.0.1') return 'http://localhost:3000';
   return '';
 })();
 
-console.log(`🔗 API URL: ${API_URL || '(mesma origem - Vercel proxy)'}`);
-
-let currentUuid = null;
+let currentPuuid = null;
+let currentPlayer = null; // { gameName, tagLine, region }
 let currentMethod = 'riotid';
+let currentLang = 'pt';
 
-function showAlert(message, type = 'error') {
-  const box = document.getElementById('alertBox');
-  box.className = `alert alert-${type} show`;
-  box.textContent = message;
-  setTimeout(() => box.classList.remove('show'), 6000);
+// ============================================
+// I18N
+// ============================================
+const I18N = {
+  pt: {
+    brand: 'Rank LoL',
+    brand_sub: 'League of Legends · Custom Commands',
+    home: 'Portfólio',
+    hero_title: 'Rank LoL',
+    hero_desc: 'Comandos customizados para exibir o seu rank de League of Legends em tempo real na Twitch',
+    search_title: 'Buscar Jogador',
+    step01: 'PASSO 01',
+    m_nicktag: 'Nick + Tag',
+    lbl_nick: 'Nick',
+    lbl_tag: 'Tag',
+    lbl_region: 'Região',
+    btn_search: '🔍 Buscar Jogador',
+    btn_search_puuid: '🔍 Buscar por PUUID',
+    hint_puuid: 'Cole o PUUID já obtido anteriormente. Você pode encontrá-lo no link gerado: <code>/cmd/lol/PUUID?msg=...</code>',
+    player_found: 'Jogador encontrado',
+    cmd_title: 'Montar & Testar Comando',
+    step02: 'PASSO 02',
+    lbl_queue: 'Fila',
+    q_solo: 'Ranked Solo/Duo',
+    q_flex: 'Ranked Flex',
+    lbl_template: 'Template da Resposta',
+    vars_general: 'Geral',
+    vars_ranked: 'Ranked',
+    vars_stats: 'Estatísticas',
+    hint_syntax: 'Você pode usar parênteses <code>(player)</code> ou chaves <code>{player}</code> — os dois funcionam.',
+    btn_test: '▶ Testar Comando',
+    preview_label: 'Como aparecerá na Twitch',
+    t_user: 'Usuário',
+    cmd_se: 'Resposta do comando (cole no StreamElements)',
+    hint_view: '💡 Você também pode visualizar a resposta pronta diretamente no navegador:',
+    toast_fill: 'Preencha nick e tag',
+    toast_fill_puuid: 'Cole um PUUID',
+    toast_fill_tpl: 'Preencha o template do comando',
+    toast_search_first: 'Busque um jogador primeiro',
+    toast_searching: 'Buscando...',
+    toast_testing: 'Testando...',
+    toast_found: '✅ Jogador encontrado',
+    toast_new: '🎉 Novo jogador registrado',
+    toast_copied: '🔗 Copiado!',
+    toast_err_conn: 'Erro de conexão: '
+  },
+  en: {
+    brand: 'Rank LoL',
+    brand_sub: 'League of Legends · Custom Commands',
+    home: 'Portfolio',
+    hero_title: 'Rank LoL',
+    hero_desc: 'Custom commands to display your League of Legends rank in real time on Twitch chat',
+    search_title: 'Search Player',
+    step01: 'STEP 01',
+    m_nicktag: 'Name + Tag',
+    lbl_nick: 'Name',
+    lbl_tag: 'Tag',
+    lbl_region: 'Region',
+    btn_search: '🔍 Search Player',
+    btn_search_puuid: '🔍 Search by PUUID',
+    hint_puuid: 'Paste a PUUID you got before. You can find it in the generated link: <code>/cmd/lol/PUUID?msg=...</code>',
+    player_found: 'Player found',
+    cmd_title: 'Build & Test Command',
+    step02: 'STEP 02',
+    lbl_queue: 'Queue',
+    q_solo: 'Ranked Solo/Duo',
+    q_flex: 'Ranked Flex',
+    lbl_template: 'Response Template',
+    vars_general: 'General',
+    vars_ranked: 'Ranked',
+    vars_stats: 'Stats',
+    hint_syntax: 'You can use parentheses <code>(player)</code> or braces <code>{player}</code> — both work.',
+    btn_test: '▶ Test Command',
+    preview_label: 'How it will look on Twitch',
+    t_user: 'User',
+    cmd_se: 'Command response (paste into StreamElements)',
+    hint_view: '💡 You can also view the rendered response directly in the browser:',
+    toast_fill: 'Fill in name and tag',
+    toast_fill_puuid: 'Paste a PUUID',
+    toast_fill_tpl: 'Fill in the template',
+    toast_search_first: 'Search a player first',
+    toast_searching: 'Searching...',
+    toast_testing: 'Testing...',
+    toast_found: '✅ Player found',
+    toast_new: '🎉 New player registered',
+    toast_copied: '🔗 Copied!',
+    toast_err_conn: 'Connection error: '
+  }
+};
+
+function t(key) {
+  return I18N[currentLang][key] || key;
 }
 
+function setLang(lang) {
+  currentLang = lang;
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.dataset.lang === lang));
+  document.documentElement.lang = lang === 'en' ? 'en' : 'pt-BR';
+
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (I18N[lang][key]) el.innerHTML = I18N[lang][key];
+  });
+}
+
+// ============================================
+// ALERT (toast)
+// ============================================
+function showAlert(msg, type = 'info') {
+  const old = document.querySelector('.alert');
+  if (old) old.remove();
+  const el = document.createElement('div');
+  el.className = `alert ${type}`;
+  el.textContent = msg;
+  document.body.appendChild(el);
+  setTimeout(() => {
+    el.style.opacity = '0';
+    setTimeout(() => el.remove(), 300);
+  }, 2800);
+}
+
+// ============================================
+// MÉTODOS
+// ============================================
 function selectMethod(method) {
   currentMethod = method;
-  document.querySelectorAll('.method-tab').forEach(t => {
-    t.classList.toggle('active', t.dataset.method === method);
-  });
+  document.querySelectorAll('.method-tab').forEach(t => t.classList.toggle('active', t.dataset.method === method));
   document.getElementById('panel-riotid').classList.toggle('active', method === 'riotid');
-  document.getElementById('panel-uuid').classList.toggle('active', method === 'uuid');
+  document.getElementById('panel-puuid').classList.toggle('active', method === 'puuid');
 }
 
 function lockCommandPanel(locked) {
   document.getElementById('commandBody').classList.toggle('locked', locked);
 }
-
-// estado inicial: passo 2 bloqueado até achar um jogador
 lockCommandPanel(true);
 
-// ---- BUSCA POR NICK + TAG + REGIÃO ----
+// ============================================
+// BUSCA POR NICK + TAG
+// ============================================
 async function searchByRiotId() {
   const gameName = document.getElementById('gameName').value.trim();
   const tagLine = document.getElementById('tagLine').value.trim().replace('#', '');
   const region = document.getElementById('region').value;
 
   if (!gameName || !tagLine) {
-    showAlert('Preencha o nick e a tag');
+    showAlert(t('toast_fill'), 'error');
     return;
   }
 
   const btn = document.getElementById('searchRiotIdBtn');
+  const orig = btn.innerHTML;
   btn.disabled = true;
-  btn.innerHTML = '<div class="spinner"></div> Buscando...';
+  btn.innerHTML = '<div class="spinner"></div> ' + t('toast_searching');
 
   try {
     const res = await fetch(`${API_URL}/api/register`, {
@@ -715,162 +517,157 @@ async function searchByRiotId() {
       body: JSON.stringify({ gameName, tagLine, region })
     });
     const data = await res.json();
-
     if (!res.ok) {
-      showAlert(data.error || 'Erro ao buscar jogador');
+      showAlert(data.error || 'Error', 'error');
       return;
     }
-
-    onPlayerFound(data.custom_uuid, data.gameName, data.tagLine, data.region);
-    showAlert(data.message, 'success');
+    onPlayerFound(data.puuid, data.gameName, data.tagLine, data.region);
+    showAlert(data.isNew ? t('toast_new') : t('toast_found'), 'success');
   } catch (err) {
-    showAlert('Erro de conexão: ' + err.message);
+    showAlert(t('toast_err_conn') + err.message, 'error');
   } finally {
     btn.disabled = false;
-    btn.innerHTML = '🔍 Buscar Jogador';
+    btn.innerHTML = orig;
   }
 }
 
-// ---- BUSCA POR UUID ----
-async function searchByUuid() {
-  const uuid = document.getElementById('uuidInput').value.trim();
-  if (!uuid) {
-    showAlert('Cole um UUID');
+// ============================================
+// BUSCA POR PUUID
+// ============================================
+async function searchByPuuid() {
+  const puuid = document.getElementById('puuidInput').value.trim();
+  if (!puuid) {
+    showAlert(t('toast_fill_puuid'), 'error');
     return;
   }
 
-  const btn = document.getElementById('searchUuidBtn');
+  const btn = document.getElementById('searchPuuidBtn');
+  const orig = btn.innerHTML;
   btn.disabled = true;
-  btn.innerHTML = '<div class="spinner"></div> Buscando...';
+  btn.innerHTML = '<div class="spinner"></div> ' + t('toast_searching');
 
   try {
-    const res = await fetch(`${API_URL}/api/player/${uuid}`);
-    const data = await res.json();
-
-    if (!res.ok) {
-      showAlert(data.error || 'UUID não encontrado');
+    // O endpoint /api/player espera o UUID customizado, mas o usuário tem PUUID.
+    // Como mantemos compatibilidade, vamos tentar achar pelo PUUID via /api/player/by-puuid não existente —
+    // alternativa simples: chamamos um endpoint genérico que aceita PUUID.
+    // Aqui o caminho mais simples é avisar que basta usar o link diretamente, mas vou tentar resolver via fetch direto.
+    // Como o backend não expõe lookup público por PUUID, usamos o próprio /cmd/lol/PUUID para validar:
+    const probe = await fetch(`${API_URL}/cmd/lol/${puuid}?msg=ping&format=text`);
+    const text = await probe.text();
+    if (text.toLowerCase().includes('not registered') || text.toLowerCase().includes('não registrado')) {
+      showAlert(text, 'error');
       return;
     }
-
-    onPlayerFound(data.custom_uuid, data.current_game_name, data.current_tag_line, data.region);
-    showAlert('✅ Jogador encontrado', 'success');
+    // Se respondeu sem erro, tentamos resolver os dados visuais via /api/player se houver — fallback: PUUID puro.
+    // Como não temos rota de leitura por PUUID, exibimos com dados limitados.
+    onPlayerFound(puuid, '—', '—', '—');
+    showAlert(t('toast_found'), 'success');
   } catch (err) {
-    showAlert('Erro de conexão: ' + err.message);
+    showAlert(t('toast_err_conn') + err.message, 'error');
   } finally {
     btn.disabled = false;
-    btn.innerHTML = '🔍 Buscar por UUID';
+    btn.innerHTML = orig;
   }
 }
 
-// ---- jogador encontrado (NÃO preenche campos automaticamente) ----
-function onPlayerFound(uuid, name, tag, region) {
-  currentUuid = uuid;
-
+// ============================================
+// JOGADOR ENCONTRADO
+// ============================================
+function onPlayerFound(puuid, name, tag, region) {
+  currentPuuid = puuid;
+  currentPlayer = { gameName: name, tagLine: tag, region };
   document.getElementById('pfName').textContent = `${name}#${tag}`;
   document.getElementById('pfRegion').textContent = (region || '').toUpperCase();
-  document.getElementById('pfUuid').textContent = uuid;
+  document.getElementById('pfPuuid').textContent = puuid;
   document.getElementById('playerFound').classList.add('show');
-
   lockCommandPanel(false);
 }
 
-function copyUuid() {
-  if (!currentUuid) return;
-  navigator.clipboard.writeText(currentUuid);
-  showAlert('UUID copiado!', 'success');
+function copyPuuid() {
+  if (!currentPuuid) return;
+  navigator.clipboard.writeText(currentPuuid);
+  showAlert(t('toast_copied'), 'success');
 }
 
 function insertVar(variable) {
-  const textarea = document.getElementById('commandTemplate');
-  const start = textarea.selectionStart;
-  const end = textarea.selectionEnd;
-  const text = textarea.value;
-  textarea.value = text.substring(0, start) + variable + text.substring(end);
-  textarea.focus();
-  textarea.selectionStart = textarea.selectionEnd = start + variable.length;
+  const ta = document.getElementById('commandTemplate');
+  const s = ta.selectionStart;
+  const e = ta.selectionEnd;
+  const txt = ta.value;
+  ta.value = txt.substring(0, s) + variable + txt.substring(e);
+  ta.focus();
+  ta.selectionStart = ta.selectionEnd = s + variable.length;
 }
 
-// ---- TESTAR COMANDO ----
+// ============================================
+// TESTAR
+// ============================================
 async function testCommand() {
-  if (!currentUuid) {
-    showAlert('Busque um jogador primeiro');
+  if (!currentPuuid) {
+    showAlert(t('toast_search_first'), 'error');
     return;
   }
-
-  const command_name = document.getElementById('commandName').value.trim();
   const template = document.getElementById('commandTemplate').value.trim();
-  const game_mode = document.getElementById('queueSelect').value;
-
-  if (!command_name || !template) {
-    showAlert('Preencha o nome e o template do comando');
+  const queue = document.getElementById('queueSelect').value;
+  if (!template) {
+    showAlert(t('toast_fill_tpl'), 'error');
     return;
   }
 
   const btn = document.getElementById('testBtn');
+  const orig = btn.innerHTML;
   btn.disabled = true;
-  btn.innerHTML = '<div class="spinner"></div> Testando...';
+  btn.innerHTML = '<div class="spinner"></div> ' + t('toast_testing');
 
   try {
-    // 1. salva/atualiza o comando no banco (necessário para o link funcionar)
-    const saveRes = await fetch(`${API_URL}/api/command`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ custom_uuid: currentUuid, command_name, template, game_mode })
-    });
-    const saveData = await saveRes.json();
-    if (!saveRes.ok) {
-      showAlert(saveData.error || 'Erro ao preparar o comando');
-      return;
-    }
-
-    // 2. executa o comando para ver o resultado renderizado
-    const runRes = await fetch(`${API_URL}/api/command/${currentUuid}/${command_name}`);
-    const runData = await runRes.json();
-    if (!runRes.ok) {
-      showAlert(runData.error || 'Erro ao testar o comando');
-      return;
-    }
-
-    showTestResult(command_name, runData.result);
+    const params = new URLSearchParams({ msg: template, queue, lang: currentLang });
+    const res = await fetch(`${API_URL}/cmd/lol/${currentPuuid}?${params.toString()}&format=text`);
+    const text = await res.text();
+    showTestResult(template, queue, text);
   } catch (err) {
-    showAlert('Erro: ' + err.message);
+    showAlert(t('toast_err_conn') + err.message, 'error');
   } finally {
     btn.disabled = false;
-    btn.innerHTML = '▶ Testar Comando';
+    btn.innerHTML = orig;
   }
 }
 
-function escapeHtml(s) {
-  return (s || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-}
-
-function showTestResult(commandName, resultText) {
-  // linha 1: o que o usuário digita na twitch
-  document.getElementById('twitchUserCmd').textContent = `!${commandName}`;
-  // linha 2: o que o bot responde
+function showTestResult(template, queue, resultText) {
+  // o que o usuário digitaria no chat (uma simulação do comando do streamer)
+  const fakeCmd = '!elo';
+  document.getElementById('twitchUserCmd').textContent = fakeCmd;
   document.getElementById('twitchBotMsg').textContent = resultText;
 
-  // campo de copiar: $(customapi LINK)
-  const link = `${window.location.origin}/cmd/${currentUuid}/${commandName}`;
-  const fullCommand = `$(customapi ${link})`;
+  // o link para o StreamElements (texto puro)
+  const origin = window.location.origin;
+  const params = new URLSearchParams({ msg: template, queue, lang: currentLang });
+  const apiLink = `${origin}/cmd/lol/${currentPuuid}?${params.toString()}`;
+  const fullCommand = `$(customapi ${apiLink})`;
   document.getElementById('customApiField').value = fullCommand;
+
+  // o link de visualização web (HTML bonito)
+  document.getElementById('webViewLink').value = apiLink;
 
   document.getElementById('testResult').style.display = 'block';
 }
 
 function copyCustomApi() {
-  const field = document.getElementById('customApiField');
-  navigator.clipboard.writeText(field.value);
-  showAlert('🔗 Comando copiado! Cole na resposta do comando no StreamElements', 'success');
+  const f = document.getElementById('customApiField');
+  navigator.clipboard.writeText(f.value);
+  showAlert(t('toast_copied'), 'success');
+}
+function copyWebView() {
+  const f = document.getElementById('webViewLink');
+  navigator.clipboard.writeText(f.value);
+  showAlert(t('toast_copied'), 'success');
 }
 
-// Enter dispara a busca
-document.getElementById('tagLine').addEventListener('keypress', e => {
-  if (e.key === 'Enter') searchByRiotId();
-});
-document.getElementById('uuidInput').addEventListener('keypress', e => {
-  if (e.key === 'Enter') searchByUuid();
-});
+// Enter dispara busca
+document.getElementById('tagLine').addEventListener('keypress', e => { if (e.key === 'Enter') searchByRiotId(); });
+document.getElementById('puuidInput').addEventListener('keypress', e => { if (e.key === 'Enter') searchByPuuid(); });
+
+// idioma inicial
+setLang('pt');
 </script>
 </body>
 </html>
