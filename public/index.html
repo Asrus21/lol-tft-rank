@@ -253,7 +253,7 @@
   <!-- PASSO 2: MONTAR E TESTAR COMANDO -->
   <div class="panel" id="commandPanel">
     <div class="panel-header">
-      <div class="panel-title" data-i18n="cmd_title">Montar &amp; Testar Comando</div>
+      <div class="panel-title" data-i18n="cmd_title">Gerar Comando</div>
       <div class="panel-badge" data-i18n="step02">PASSO 02</div>
     </div>
     <div class="panel-body" id="commandBody">
@@ -268,7 +268,7 @@
 
       <div class="form-group">
         <label data-i18n="lbl_template">Template da Resposta</label>
-        <textarea id="commandTemplate" placeholder="ex: (player) está (rank) com (pontos) pontos."></textarea>
+        <textarea id="commandTemplate" placeholder="(player) está (rank) com (pontos) pontos"></textarea>
 
         <div class="vars-section-title" data-i18n="vars_general">Geral</div>
         <div class="vars-help">
@@ -297,7 +297,7 @@
       </div>
 
       <button class="btn" id="testBtn" onclick="testCommand()">
-        <span data-i18n="btn_test">▶ Testar Comando</span>
+        <span data-i18n="btn_test">⚙️ Gerar Comando</span>
       </button>
 
       <!-- resultado do teste -->
@@ -376,7 +376,7 @@ const I18N = {
     btn_search_puuid: '🔍 Buscar por PUUID',
     hint_puuid: 'Cole o PUUID já obtido anteriormente. Você pode encontrá-lo no link gerado: <code>/cmd/lol/PUUID?msg=...</code>',
     player_found: 'Jogador encontrado',
-    cmd_title: 'Montar & Testar Comando',
+    cmd_title: 'Gerar Comando',
     step02: 'PASSO 02',
     lbl_queue: 'Fila',
     q_solo: 'Ranked Solo/Duo',
@@ -386,7 +386,7 @@ const I18N = {
     vars_ranked: 'Ranked',
     vars_stats: 'Estatísticas',
     hint_syntax: 'Você pode usar parênteses <code>(player)</code> ou chaves <code>{player}</code> — os dois funcionam.',
-    btn_test: '▶ Testar Comando',
+    btn_test: '⚙️ Gerar Comando',
     preview_label: 'Como aparecerá na Twitch',
     t_user: 'Usuário',
     cmd_se: 'Resposta do comando (cole no StreamElements)',
@@ -396,7 +396,7 @@ const I18N = {
     toast_fill_tpl: 'Preencha o template do comando',
     toast_search_first: 'Busque um jogador primeiro',
     toast_searching: 'Buscando...',
-    toast_testing: 'Testando...',
+    toast_testing: 'Gerando...',
     toast_found: '✅ Jogador encontrado',
     toast_new: '🎉 Novo jogador registrado',
     toast_copied: '🔗 Copiado!',
@@ -418,7 +418,7 @@ const I18N = {
     btn_search_puuid: '🔍 Search by PUUID',
     hint_puuid: 'Paste a PUUID you got before. You can find it in the generated link: <code>/cmd/lol/PUUID?msg=...</code>',
     player_found: 'Player found',
-    cmd_title: 'Build & Test Command',
+    cmd_title: 'Generate Command',
     step02: 'STEP 02',
     lbl_queue: 'Queue',
     q_solo: 'Ranked Solo/Duo',
@@ -428,7 +428,7 @@ const I18N = {
     vars_ranked: 'Ranked',
     vars_stats: 'Stats',
     hint_syntax: 'You can use parentheses <code>(player)</code> or braces <code>{player}</code> — both work.',
-    btn_test: '▶ Test Command',
+    btn_test: '⚙️ Generate Command',
     preview_label: 'How it will look on Twitch',
     t_user: 'User',
     cmd_se: 'Command response (paste into StreamElements)',
@@ -438,7 +438,7 @@ const I18N = {
     toast_fill_tpl: 'Fill in the template',
     toast_search_first: 'Search a player first',
     toast_searching: 'Searching...',
-    toast_testing: 'Testing...',
+    toast_testing: 'Generating...',
     toast_found: '✅ Player found',
     toast_new: '🎉 New player registered',
     toast_copied: '🔗 Copied!',
@@ -602,17 +602,34 @@ function insertVar(variable) {
 // ============================================
 // TESTAR
 // ============================================
+// Template padrão usado quando o usuário não preenche nada
+const DEFAULT_TEMPLATE = '(player) está (rank) com (pontos) pontos';
+
+// Monta a URL de forma "clean" — sem codificar parênteses e espaços, e com aspas no msg
+// Caracteres que de fato quebram a URL ainda são codificados (& # ? % e os ASCII de controle)
+function buildCleanUrl(puuid, msg, queue, lang) {
+  // Codifica APENAS o que realmente quebra a URL
+  // Mantém legíveis: parênteses, chaves, espaços, acentos, dois-pontos, vírgula, ponto, barra, etc.
+  const safeMsg = String(msg).replace(/[&#?%]/g, encodeURIComponent);
+  const safeQueue = String(queue).replace(/[&#?%]/g, encodeURIComponent);
+  const safeLang = String(lang).replace(/[&#?%]/g, encodeURIComponent);
+
+  // Envolve msg em aspas (o backend remove aspas externas automaticamente)
+  return `${window.location.origin}/cmd/lol/${puuid}?msg="${safeMsg}"&queue=${safeQueue}&lang=${safeLang}`;
+}
+
 async function testCommand() {
   if (!currentPuuid) {
     showAlert(t('toast_search_first'), 'error');
     return;
   }
-  const template = document.getElementById('commandTemplate').value.trim();
-  const queue = document.getElementById('queueSelect').value;
+
+  // Template padrão quando o campo está vazio
+  let template = document.getElementById('commandTemplate').value.trim();
   if (!template) {
-    showAlert(t('toast_fill_tpl'), 'error');
-    return;
+    template = DEFAULT_TEMPLATE;
   }
+  const queue = document.getElementById('queueSelect').value;
 
   const btn = document.getElementById('testBtn');
   const orig = btn.innerHTML;
@@ -620,6 +637,8 @@ async function testCommand() {
   btn.innerHTML = '<div class="spinner"></div> ' + t('toast_testing');
 
   try {
+    // Para o fetch interno (validação/preview), uso URLSearchParams porque o navegador
+    // gerencia a codificação corretamente — o usuário não vê essa URL.
     const params = new URLSearchParams({ msg: template, queue, lang: currentLang });
     const res = await fetch(`${API_URL}/cmd/lol/${currentPuuid}?${params.toString()}&format=text`);
     const text = await res.text();
@@ -633,19 +652,14 @@ async function testCommand() {
 }
 
 function showTestResult(template, queue, resultText) {
-  // o que o usuário digitaria no chat (uma simulação do comando do streamer)
   const fakeCmd = '!elo';
   document.getElementById('twitchUserCmd').textContent = fakeCmd;
   document.getElementById('twitchBotMsg').textContent = resultText;
 
-  // o link para o StreamElements (texto puro)
-  const origin = window.location.origin;
-  const params = new URLSearchParams({ msg: template, queue, lang: currentLang });
-  const apiLink = `${origin}/cmd/lol/${currentPuuid}?${params.toString()}`;
+  // Link "clean" — é o que o usuário copia e cola
+  const apiLink = buildCleanUrl(currentPuuid, template, queue, currentLang);
   const fullCommand = `$(customapi ${apiLink})`;
   document.getElementById('customApiField').value = fullCommand;
-
-  // o link de visualização web (HTML bonito)
   document.getElementById('webViewLink').value = apiLink;
 
   document.getElementById('testResult').style.display = 'block';
