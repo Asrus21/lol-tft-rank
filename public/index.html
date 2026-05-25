@@ -88,15 +88,15 @@
   .btn:active{transform:translateY(0)}
   .btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
 
-  /* RESULTADO BUSCA */
+  /* RESULTADO BUSCA (passo 1) */
   .player-found{background:linear-gradient(135deg,rgba(167,139,250,.12),rgba(244,114,182,.08));border:1px solid var(--accent);border-radius:10px;padding:16px;margin-top:16px;display:none}
   .player-found.show{display:block;animation:slideIn .3s ease-out}
   @keyframes slideIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
-  .player-found-label{font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:var(--accent);margin-bottom:8px;font-weight:700}
-  .player-found-info{display:flex;gap:16px;font-size:14px;color:var(--text-secondary);flex-wrap:wrap}
-  .player-found-info strong{color:var(--text-primary)}
-  .uuid-code{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-primary);word-break:break-all;padding:10px 12px;background:var(--bg-primary);border-radius:6px;border:1px solid var(--border);margin-top:10px;display:flex;justify-content:space-between;align-items:center;gap:10px}
-  .uuid-label{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-muted);margin-top:10px;margin-bottom:4px;font-weight:700}
+  .player-found-label{font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:var(--accent);margin-bottom:10px;font-weight:700}
+  .player-found-name{font-size:18px;font-weight:700;color:var(--text-primary);margin-bottom:4px}
+  .player-found-region{font-size:12px;color:var(--text-secondary);margin-bottom:14px}
+  .uuid-label{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-muted);margin-bottom:4px;font-weight:700}
+  .uuid-code{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-primary);word-break:break-all;padding:10px 12px;background:var(--bg-primary);border-radius:6px;border:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;gap:10px}
 
   .copy-btn{background:transparent;border:1px solid var(--border-light);color:var(--text-secondary);padding:5px 12px;border-radius:4px;cursor:pointer;font-size:11px;font-family:'JetBrains Mono',monospace;transition:all .2s;flex-shrink:0}
   .copy-btn:hover{background:var(--accent);color:#fff;border-color:var(--accent)}
@@ -106,8 +106,6 @@
   .vars-help{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
   .var-chip{font-family:'JetBrains Mono',monospace;font-size:11px;padding:4px 10px;background:var(--bg-elevated);border:1px solid var(--border-light);border-radius:4px;color:var(--accent-cool);cursor:pointer;transition:all .15s}
   .var-chip:hover{border-color:var(--accent);color:var(--accent);background:var(--bg-primary)}
-
-  .locked{opacity:.4;pointer-events:none}
 
   /* PREVIEW TWITCH */
   .twitch-preview{background:var(--bg-primary);border:1px solid var(--border);border-radius:10px;padding:16px;margin-top:14px}
@@ -126,6 +124,11 @@
 
   .hint{font-size:12px;color:var(--text-muted);margin-top:6px;line-height:1.5}
   .hint code{font-family:'JetBrains Mono',monospace;background:var(--bg-elevated);padding:1px 6px;border-radius:4px;font-size:11px;color:var(--accent-cool)}
+
+  /* Subseção dentro do passo 2 */
+  .subsection{padding:16px;background:var(--bg-secondary);border:1px solid var(--border);border-radius:10px;margin-bottom:18px}
+  .subsection-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-secondary);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+  .subsection-title::before{content:'';width:3px;height:12px;background:var(--accent);border-radius:2px}
 
   /* SPINNER */
   .spinner{width:14px;height:14px;border:2px solid rgba(255,255,255,.2);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite}
@@ -160,7 +163,7 @@
       </div>
     </div>
     <div class="header-right">
-      <a href="/portifolio" class="home-btn" title="Portfólio">← <span data-i18n="home">Portfólio</span></a>
+      <a href="https://asrus.app/" class="home-btn" title="Inicio">← <span data-i18n="home">Inicio</span></a>
       <div class="lang-switch">
         <button class="lang-btn active" data-lang="pt" onclick="setLang('pt')">PT</button>
         <button class="lang-btn" data-lang="en" onclick="setLang('en')">EN</button>
@@ -175,7 +178,7 @@
     <div class="hero-desc" data-i18n="hero_desc">Comandos customizados para exibir o seu rank de League of Legends em tempo real na Twitch</div>
   </div>
 
-  <!-- PASSO 1: BUSCAR JOGADOR -->
+  <!-- PASSO 1: BUSCAR PUUID (só nick+tag, resultado mostra PUUID) -->
   <div class="panel">
     <div class="panel-header">
       <div class="panel-title" data-i18n="search_title">Buscar Jogador</div>
@@ -183,63 +186,43 @@
     </div>
     <div class="panel-body">
 
-      <div class="method-tabs">
-        <div class="method-tab active" data-method="riotid" onclick="selectMethod('riotid')"><span data-i18n="m_nicktag">Nick + Tag</span></div>
-        <div class="method-tab" data-method="puuid" onclick="selectMethod('puuid')">PUUID</div>
-      </div>
+      <div class="hint" style="margin-top:0;margin-bottom:14px" data-i18n="hint_step1">Use para descobrir o PUUID de um jogador. O PUUID é necessário para gerar comandos no Passo 02.</div>
 
-      <!-- método: nick + tag + região -->
-      <div class="method-panel active" id="panel-riotid">
-        <div class="form-row">
-          <div class="form-group">
-            <label data-i18n="lbl_nick">Nick</label>
-            <input type="text" id="gameName" placeholder="ex: asrus" autocomplete="off">
-          </div>
-          <div class="form-group">
-            <label data-i18n="lbl_tag">Tag</label>
-            <input type="text" id="tagLine" placeholder="ex: BR1" autocomplete="off">
-          </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label data-i18n="lbl_nick">Nick</label>
+          <input type="text" id="searchGameName" placeholder="ex: asrus" autocomplete="off">
         </div>
         <div class="form-group">
-          <label data-i18n="lbl_region">Região</label>
-          <select id="region">
-            <option value="br1">BR1 — Brasil</option>
-            <option value="na1">NA1 — North America</option>
-            <option value="euw1">EUW1 — Europe West</option>
-            <option value="eun1">EUN1 — Europe Nordic &amp; East</option>
-            <option value="kr">KR — Korea</option>
-            <option value="jp1">JP1 — Japan</option>
-            <option value="la1">LA1 — Latin America North</option>
-            <option value="la2">LA2 — Latin America South</option>
-            <option value="oc1">OC1 — Oceania</option>
-            <option value="tr1">TR1 — Turkey</option>
-            <option value="ru">RU — Russia</option>
-          </select>
+          <label data-i18n="lbl_tag">Tag</label>
+          <input type="text" id="searchTagLine" placeholder="ex: BR1" autocomplete="off">
         </div>
-        <button class="btn" id="searchRiotIdBtn" onclick="searchByRiotId()">
-          <span data-i18n="btn_search">🔍 Buscar Jogador</span>
-        </button>
       </div>
-
-      <!-- método: puuid -->
-      <div class="method-panel" id="panel-puuid">
-        <div class="form-group">
-          <label>PUUID</label>
-          <input type="text" id="puuidInput" placeholder="ex: Z9YJFowsnYTMkRbR..." autocomplete="off">
-          <div class="hint" data-i18n="hint_puuid">Cole o PUUID já obtido anteriormente. Você pode encontrá-lo no link gerado: <code>/cmd/lol/PUUID?msg=...</code></div>
-        </div>
-        <button class="btn" id="searchPuuidBtn" onclick="searchByPuuid()">
-          <span data-i18n="btn_search_puuid">🔍 Buscar por PUUID</span>
-        </button>
+      <div class="form-group">
+        <label data-i18n="lbl_region">Região</label>
+        <select id="searchRegion">
+          <option value="br1">BR1 — Brasil</option>
+          <option value="na1">NA1 — North America</option>
+          <option value="euw1">EUW1 — Europe West</option>
+          <option value="eun1">EUN1 — Europe Nordic &amp; East</option>
+          <option value="kr">KR — Korea</option>
+          <option value="jp1">JP1 — Japan</option>
+          <option value="la1">LA1 — Latin America North</option>
+          <option value="la2">LA2 — Latin America South</option>
+          <option value="oc1">OC1 — Oceania</option>
+          <option value="tr1">TR1 — Turkey</option>
+          <option value="ru">RU — Russia</option>
+        </select>
       </div>
+      <button class="btn" id="searchBtn" onclick="searchPlayer()">
+        <span data-i18n="btn_search">🔍 Buscar Jogador</span>
+      </button>
 
       <!-- resultado -->
       <div id="playerFound" class="player-found">
         <div class="player-found-label">✓ <span data-i18n="player_found">Jogador encontrado</span></div>
-        <div class="player-found-info">
-          <span>👤 <strong id="pfName"></strong></span>
-          <span>🌎 <strong id="pfRegion"></strong></span>
-        </div>
+        <div class="player-found-name" id="pfName"></div>
+        <div class="player-found-region" id="pfRegion"></div>
         <div class="uuid-label">PUUID</div>
         <div class="uuid-code">
           <span id="pfPuuid"></span>
@@ -250,14 +233,64 @@
     </div>
   </div>
 
-  <!-- PASSO 2: MONTAR E TESTAR COMANDO -->
-  <div class="panel" id="commandPanel">
+  <!-- PASSO 2: GERAR COMANDO (totalmente independente do passo 1) -->
+  <div class="panel">
     <div class="panel-header">
       <div class="panel-title" data-i18n="cmd_title">Gerar Comando</div>
       <div class="panel-badge" data-i18n="step02">PASSO 02</div>
     </div>
-    <div class="panel-body" id="commandBody">
+    <div class="panel-body">
 
+      <!-- subseção: identificar o jogador (próprio do passo 2) -->
+      <div class="subsection">
+        <div class="subsection-title" data-i18n="who_label">Jogador para o comando</div>
+
+        <div class="method-tabs">
+          <div class="method-tab active" data-method="riotid" onclick="selectGenMethod('riotid')"><span data-i18n="m_nicktag">Nick + Tag</span></div>
+          <div class="method-tab" data-method="puuid" onclick="selectGenMethod('puuid')">PUUID</div>
+        </div>
+
+        <!-- método: nick + tag + região -->
+        <div class="method-panel active" id="gen-panel-riotid">
+          <div class="form-row">
+            <div class="form-group" style="margin-bottom:12px">
+              <label data-i18n="lbl_nick">Nick</label>
+              <input type="text" id="genGameName" placeholder="ex: asrus" autocomplete="off">
+            </div>
+            <div class="form-group" style="margin-bottom:12px">
+              <label data-i18n="lbl_tag">Tag</label>
+              <input type="text" id="genTagLine" placeholder="ex: BR1" autocomplete="off">
+            </div>
+          </div>
+          <div class="form-group" style="margin-bottom:0">
+            <label data-i18n="lbl_region">Região</label>
+            <select id="genRegion">
+              <option value="br1">BR1 — Brasil</option>
+              <option value="na1">NA1 — North America</option>
+              <option value="euw1">EUW1 — Europe West</option>
+              <option value="eun1">EUN1 — Europe Nordic &amp; East</option>
+              <option value="kr">KR — Korea</option>
+              <option value="jp1">JP1 — Japan</option>
+              <option value="la1">LA1 — Latin America North</option>
+              <option value="la2">LA2 — Latin America South</option>
+              <option value="oc1">OC1 — Oceania</option>
+              <option value="tr1">TR1 — Turkey</option>
+              <option value="ru">RU — Russia</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- método: puuid -->
+        <div class="method-panel" id="gen-panel-puuid">
+          <div class="form-group" style="margin-bottom:0">
+            <label>PUUID</label>
+            <input type="text" id="genPuuid" placeholder="ex: Z9YJFowsnYTMkRbR..." autocomplete="off">
+            <div class="hint" data-i18n="hint_puuid_use">Use o PUUID obtido no Passo 01 ou um que você já tenha.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- fila e template -->
       <div class="form-group">
         <label data-i18n="lbl_queue">Fila</label>
         <select id="queueSelect">
@@ -296,11 +329,11 @@
         <div class="hint" data-i18n="hint_syntax">Você pode usar parênteses <code>(player)</code> ou chaves <code>{player}</code> — os dois funcionam.</div>
       </div>
 
-      <button class="btn" id="testBtn" onclick="testCommand()">
+      <button class="btn" id="genBtn" onclick="generateCommand()">
         <span data-i18n="btn_test">⚙️ Gerar Comando</span>
       </button>
 
-      <!-- resultado do teste -->
+      <!-- resultado -->
       <div id="testResult" class="twitch-preview" style="display:none">
         <div class="preview-label" data-i18n="preview_label">Como aparecerá na Twitch</div>
         <div class="twitch-line">
@@ -351,10 +384,15 @@ const API_URL = (() => {
   return '';
 })();
 
-let currentPuuid = null;
-let currentPlayer = null; // { gameName, tagLine, region }
-let currentMethod = 'riotid';
+let foundPuuid = null;       // PUUID encontrado no PASSO 1 (apenas exibição)
+let currentGenMethod = 'riotid'; // método ativo no PASSO 2
 let currentLang = 'pt';
+
+// Template padrão por idioma — usado quando o usuário não preenche
+const DEFAULT_TEMPLATE = {
+  pt: '(player) está (rank) com (pontos) pontos',
+  en: '(player) is (rank) with (lp) LP'
+};
 
 // ============================================
 // I18N
@@ -368,16 +406,17 @@ const I18N = {
     hero_desc: 'Comandos customizados para exibir o seu rank de League of Legends em tempo real na Twitch',
     search_title: 'Buscar Jogador',
     step01: 'PASSO 01',
-    m_nicktag: 'Nick + Tag',
+    hint_step1: 'Use para descobrir o PUUID de um jogador. O PUUID é necessário para gerar comandos no Passo 02.',
     lbl_nick: 'Nick',
     lbl_tag: 'Tag',
     lbl_region: 'Região',
     btn_search: '🔍 Buscar Jogador',
-    btn_search_puuid: '🔍 Buscar por PUUID',
-    hint_puuid: 'Cole o PUUID já obtido anteriormente. Você pode encontrá-lo no link gerado: <code>/cmd/lol/PUUID?msg=...</code>',
     player_found: 'Jogador encontrado',
     cmd_title: 'Gerar Comando',
     step02: 'PASSO 02',
+    who_label: 'Jogador para o comando',
+    m_nicktag: 'Nick + Tag',
+    hint_puuid_use: 'Use o PUUID obtido no Passo 01 ou um que você já tenha.',
     lbl_queue: 'Fila',
     q_solo: 'Ranked Solo/Duo',
     q_flex: 'Ranked Flex',
@@ -391,14 +430,11 @@ const I18N = {
     t_user: 'Usuário',
     cmd_se: 'Resposta do comando (cole no StreamElements)',
     hint_view: '💡 Você também pode visualizar a resposta pronta diretamente no navegador:',
-    toast_fill: 'Preencha nick e tag',
+    toast_fill_nicktag: 'Preencha nick e tag',
     toast_fill_puuid: 'Cole um PUUID',
-    toast_fill_tpl: 'Preencha o template do comando',
-    toast_search_first: 'Busque um jogador primeiro',
     toast_searching: 'Buscando...',
-    toast_testing: 'Gerando...',
+    toast_generating: 'Gerando...',
     toast_found: '✅ Jogador encontrado',
-    toast_new: '🎉 Novo jogador registrado',
     toast_copied: '🔗 Copiado!',
     toast_err_conn: 'Erro de conexão: '
   },
@@ -410,16 +446,17 @@ const I18N = {
     hero_desc: 'Custom commands to display your League of Legends rank in real time on Twitch chat',
     search_title: 'Search Player',
     step01: 'STEP 01',
-    m_nicktag: 'Name + Tag',
+    hint_step1: 'Use this to look up a player\'s PUUID. The PUUID is required to generate commands in Step 02.',
     lbl_nick: 'Name',
     lbl_tag: 'Tag',
     lbl_region: 'Region',
     btn_search: '🔍 Search Player',
-    btn_search_puuid: '🔍 Search by PUUID',
-    hint_puuid: 'Paste a PUUID you got before. You can find it in the generated link: <code>/cmd/lol/PUUID?msg=...</code>',
     player_found: 'Player found',
     cmd_title: 'Generate Command',
     step02: 'STEP 02',
+    who_label: 'Player for the command',
+    m_nicktag: 'Name + Tag',
+    hint_puuid_use: 'Use the PUUID from Step 01 or one you already have.',
     lbl_queue: 'Queue',
     q_solo: 'Ranked Solo/Duo',
     q_flex: 'Ranked Flex',
@@ -433,14 +470,11 @@ const I18N = {
     t_user: 'User',
     cmd_se: 'Command response (paste into StreamElements)',
     hint_view: '💡 You can also view the rendered response directly in the browser:',
-    toast_fill: 'Fill in name and tag',
+    toast_fill_nicktag: 'Fill in name and tag',
     toast_fill_puuid: 'Paste a PUUID',
-    toast_fill_tpl: 'Fill in the template',
-    toast_search_first: 'Search a player first',
     toast_searching: 'Searching...',
-    toast_testing: 'Generating...',
+    toast_generating: 'Generating...',
     toast_found: '✅ Player found',
-    toast_new: '🎉 New player registered',
     toast_copied: '🔗 Copied!',
     toast_err_conn: 'Connection error: '
   }
@@ -460,7 +494,7 @@ function setLang(lang) {
     if (I18N[lang][key]) el.innerHTML = I18N[lang][key];
   });
 
-  // Atualiza o placeholder do template com o exemplo no idioma atual
+  // placeholder do textarea com o exemplo no idioma atual
   const ta = document.getElementById('commandTemplate');
   if (ta) ta.placeholder = DEFAULT_TEMPLATE[lang] || DEFAULT_TEMPLATE.pt;
 }
@@ -482,34 +516,21 @@ function showAlert(msg, type = 'info') {
 }
 
 // ============================================
-// MÉTODOS
+// PASSO 1: buscar jogador (só para descobrir o PUUID)
+// O resultado NÃO é usado automaticamente no Passo 2.
+// O salvamento no banco acontece silenciosamente (necessário para o /cmd/lol/PUUID funcionar depois).
 // ============================================
-function selectMethod(method) {
-  currentMethod = method;
-  document.querySelectorAll('.method-tab').forEach(t => t.classList.toggle('active', t.dataset.method === method));
-  document.getElementById('panel-riotid').classList.toggle('active', method === 'riotid');
-  document.getElementById('panel-puuid').classList.toggle('active', method === 'puuid');
-}
-
-function lockCommandPanel(locked) {
-  document.getElementById('commandBody').classList.toggle('locked', locked);
-}
-lockCommandPanel(true);
-
-// ============================================
-// BUSCA POR NICK + TAG
-// ============================================
-async function searchByRiotId() {
-  const gameName = document.getElementById('gameName').value.trim();
-  const tagLine = document.getElementById('tagLine').value.trim().replace('#', '');
-  const region = document.getElementById('region').value;
+async function searchPlayer() {
+  const gameName = document.getElementById('searchGameName').value.trim();
+  const tagLine = document.getElementById('searchTagLine').value.trim().replace('#', '');
+  const region = document.getElementById('searchRegion').value;
 
   if (!gameName || !tagLine) {
-    showAlert(t('toast_fill'), 'error');
+    showAlert(t('toast_fill_nicktag'), 'error');
     return;
   }
 
-  const btn = document.getElementById('searchRiotIdBtn');
+  const btn = document.getElementById('searchBtn');
   const orig = btn.innerHTML;
   btn.disabled = true;
   btn.innerHTML = '<div class="spinner"></div> ' + t('toast_searching');
@@ -525,46 +546,8 @@ async function searchByRiotId() {
       showAlert(data.error || 'Error', 'error');
       return;
     }
+    // salva no banco silenciosamente (data.isNew indica se foi criado agora)
     onPlayerFound(data.puuid, data.gameName, data.tagLine, data.region);
-    showAlert(data.isNew ? t('toast_new') : t('toast_found'), 'success');
-  } catch (err) {
-    showAlert(t('toast_err_conn') + err.message, 'error');
-  } finally {
-    btn.disabled = false;
-    btn.innerHTML = orig;
-  }
-}
-
-// ============================================
-// BUSCA POR PUUID
-// ============================================
-async function searchByPuuid() {
-  const puuid = document.getElementById('puuidInput').value.trim();
-  if (!puuid) {
-    showAlert(t('toast_fill_puuid'), 'error');
-    return;
-  }
-
-  const btn = document.getElementById('searchPuuidBtn');
-  const orig = btn.innerHTML;
-  btn.disabled = true;
-  btn.innerHTML = '<div class="spinner"></div> ' + t('toast_searching');
-
-  try {
-    // O endpoint /api/player espera o UUID customizado, mas o usuário tem PUUID.
-    // Como mantemos compatibilidade, vamos tentar achar pelo PUUID via /api/player/by-puuid não existente —
-    // alternativa simples: chamamos um endpoint genérico que aceita PUUID.
-    // Aqui o caminho mais simples é avisar que basta usar o link diretamente, mas vou tentar resolver via fetch direto.
-    // Como o backend não expõe lookup público por PUUID, usamos o próprio /cmd/lol/PUUID para validar:
-    const probe = await fetch(`${API_URL}/cmd/lol/${puuid}?msg=ping&format=text`);
-    const text = await probe.text();
-    if (text.toLowerCase().includes('not registered') || text.toLowerCase().includes('não registrado')) {
-      showAlert(text, 'error');
-      return;
-    }
-    // Se respondeu sem erro, tentamos resolver os dados visuais via /api/player se houver — fallback: PUUID puro.
-    // Como não temos rota de leitura por PUUID, exibimos com dados limitados.
-    onPlayerFound(puuid, '—', '—', '—');
     showAlert(t('toast_found'), 'success');
   } catch (err) {
     showAlert(t('toast_err_conn') + err.message, 'error');
@@ -574,23 +557,28 @@ async function searchByPuuid() {
   }
 }
 
-// ============================================
-// JOGADOR ENCONTRADO
-// ============================================
 function onPlayerFound(puuid, name, tag, region) {
-  currentPuuid = puuid;
-  currentPlayer = { gameName: name, tagLine: tag, region };
+  foundPuuid = puuid; // guarda só para o botão COPY
   document.getElementById('pfName').textContent = `${name}#${tag}`;
-  document.getElementById('pfRegion').textContent = (region || '').toUpperCase();
+  document.getElementById('pfRegion').textContent = '🌎 ' + (region || '').toUpperCase();
   document.getElementById('pfPuuid').textContent = puuid;
   document.getElementById('playerFound').classList.add('show');
-  lockCommandPanel(false);
 }
 
 function copyPuuid() {
-  if (!currentPuuid) return;
-  navigator.clipboard.writeText(currentPuuid);
+  if (!foundPuuid) return;
+  navigator.clipboard.writeText(foundPuuid);
   showAlert(t('toast_copied'), 'success');
+}
+
+// ============================================
+// PASSO 2: gerar comando (independente do Passo 1)
+// ============================================
+function selectGenMethod(method) {
+  currentGenMethod = method;
+  document.querySelectorAll('#gen-panel-riotid, #gen-panel-puuid').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.subsection .method-tab').forEach(t => t.classList.toggle('active', t.dataset.method === method));
+  document.getElementById('gen-panel-' + method).classList.add('active');
 }
 
 function insertVar(variable) {
@@ -603,53 +591,64 @@ function insertVar(variable) {
   ta.selectionStart = ta.selectionEnd = s + variable.length;
 }
 
-// ============================================
-// TESTAR
-// ============================================
-// Template padrão por idioma — usado quando o usuário não preenche nada
-const DEFAULT_TEMPLATE = {
-  pt: '(player) está (rank) com (pontos) pontos',
-  en: '(player) is (rank) with (lp) LP'
-};
+// Resolve o PUUID a partir do método ativo no Passo 2
+// Retorna { puuid, error } — error é uma chave i18n para mostrar como toast
+async function resolveGenPuuid() {
+  if (currentGenMethod === 'puuid') {
+    const puuid = document.getElementById('genPuuid').value.trim();
+    if (!puuid) return { puuid: null, error: 'toast_fill_puuid' };
+    return { puuid };
+  }
 
-// Monta a URL de forma "clean" — sem codificar parênteses e espaços, e com aspas no msg
-// Caracteres que de fato quebram a URL ainda são codificados (& # ? % e os ASCII de controle)
+  // nick + tag + região
+  const gameName = document.getElementById('genGameName').value.trim();
+  const tagLine = document.getElementById('genTagLine').value.trim().replace('#', '');
+  const region = document.getElementById('genRegion').value;
+  if (!gameName || !tagLine) return { puuid: null, error: 'toast_fill_nicktag' };
+
+  // Resolve nick+tag → puuid via /api/register (salva no banco também)
+  const res = await fetch(`${API_URL}/api/register`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ gameName, tagLine, region })
+  });
+  const data = await res.json();
+  if (!res.ok) return { puuid: null, errorMsg: data.error || 'Error' };
+  return { puuid: data.puuid };
+}
+
+// Monta URL "clean" — só codifica o que de fato quebra a URL
 function buildCleanUrl(puuid, msg, queue, lang) {
-  // Codifica APENAS o que realmente quebra a URL
-  // Mantém legíveis: parênteses, chaves, espaços, acentos, dois-pontos, vírgula, ponto, barra, etc.
   const safeMsg = String(msg).replace(/[&#?%]/g, encodeURIComponent);
   const safeQueue = String(queue).replace(/[&#?%]/g, encodeURIComponent);
   const safeLang = String(lang).replace(/[&#?%]/g, encodeURIComponent);
-
-  // Envolve msg em aspas (o backend remove aspas externas automaticamente)
   return `${window.location.origin}/cmd/lol/${puuid}?msg="${safeMsg}"&queue=${safeQueue}&lang=${safeLang}`;
 }
 
-async function testCommand() {
-  if (!currentPuuid) {
-    showAlert(t('toast_search_first'), 'error');
-    return;
-  }
-
-  // Template padrão quando o campo está vazio (varia por idioma)
-  let template = document.getElementById('commandTemplate').value.trim();
-  if (!template) {
-    template = DEFAULT_TEMPLATE[currentLang] || DEFAULT_TEMPLATE.pt;
-  }
-  const queue = document.getElementById('queueSelect').value;
-
-  const btn = document.getElementById('testBtn');
+async function generateCommand() {
+  const btn = document.getElementById('genBtn');
   const orig = btn.innerHTML;
   btn.disabled = true;
-  btn.innerHTML = '<div class="spinner"></div> ' + t('toast_testing');
+  btn.innerHTML = '<div class="spinner"></div> ' + t('toast_generating');
 
   try {
-    // Para o fetch interno (validação/preview), uso URLSearchParams porque o navegador
-    // gerencia a codificação corretamente — o usuário não vê essa URL.
+    const { puuid, error, errorMsg } = await resolveGenPuuid();
+    if (!puuid) {
+      showAlert(errorMsg || t(error), 'error');
+      return;
+    }
+
+    // template padrão se vazio (por idioma)
+    let template = document.getElementById('commandTemplate').value.trim();
+    if (!template) template = DEFAULT_TEMPLATE[currentLang] || DEFAULT_TEMPLATE.pt;
+    const queue = document.getElementById('queueSelect').value;
+
+    // chama o backend para validar e gerar o preview
     const params = new URLSearchParams({ msg: template, queue, lang: currentLang });
-    const res = await fetch(`${API_URL}/cmd/lol/${currentPuuid}?${params.toString()}&format=text`);
+    const res = await fetch(`${API_URL}/cmd/lol/${puuid}?${params.toString()}&format=text`);
     const text = await res.text();
-    showTestResult(template, queue, text);
+
+    showResult(puuid, template, queue, text);
   } catch (err) {
     showAlert(t('toast_err_conn') + err.message, 'error');
   } finally {
@@ -658,34 +657,29 @@ async function testCommand() {
   }
 }
 
-function showTestResult(template, queue, resultText) {
-  const fakeCmd = '!elo';
-  document.getElementById('twitchUserCmd').textContent = fakeCmd;
+function showResult(puuid, template, queue, resultText) {
+  document.getElementById('twitchUserCmd').textContent = '!elo';
   document.getElementById('twitchBotMsg').textContent = resultText;
 
-  // Link "clean" — é o que o usuário copia e cola
-  const apiLink = buildCleanUrl(currentPuuid, template, queue, currentLang);
-  const fullCommand = `$(customapi ${apiLink})`;
-  document.getElementById('customApiField').value = fullCommand;
+  const apiLink = buildCleanUrl(puuid, template, queue, currentLang);
+  document.getElementById('customApiField').value = `$(customapi ${apiLink})`;
   document.getElementById('webViewLink').value = apiLink;
-
   document.getElementById('testResult').style.display = 'block';
 }
 
 function copyCustomApi() {
-  const f = document.getElementById('customApiField');
-  navigator.clipboard.writeText(f.value);
+  navigator.clipboard.writeText(document.getElementById('customApiField').value);
   showAlert(t('toast_copied'), 'success');
 }
 function copyWebView() {
-  const f = document.getElementById('webViewLink');
-  navigator.clipboard.writeText(f.value);
+  navigator.clipboard.writeText(document.getElementById('webViewLink').value);
   showAlert(t('toast_copied'), 'success');
 }
 
-// Enter dispara busca
-document.getElementById('tagLine').addEventListener('keypress', e => { if (e.key === 'Enter') searchByRiotId(); });
-document.getElementById('puuidInput').addEventListener('keypress', e => { if (e.key === 'Enter') searchByPuuid(); });
+// Enter dispara busca/gerar
+document.getElementById('searchTagLine').addEventListener('keypress', e => { if (e.key === 'Enter') searchPlayer(); });
+document.getElementById('genTagLine').addEventListener('keypress', e => { if (e.key === 'Enter') generateCommand(); });
+document.getElementById('genPuuid').addEventListener('keypress', e => { if (e.key === 'Enter') generateCommand(); });
 
 // idioma inicial
 setLang('pt');
