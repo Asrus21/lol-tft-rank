@@ -163,7 +163,7 @@
       </div>
     </div>
     <div class="header-right">
-      <a href="https://asrus.app/" class="home-btn" title="Inicio">← <span data-i18n="home">Inicio</span></a>
+      <a href="/portifolio" class="home-btn" title="Portfólio">← <span data-i18n="home">Portfólio</span></a>
       <div class="lang-switch">
         <button class="lang-btn active" data-lang="pt" onclick="setLang('pt')">PT</button>
         <button class="lang-btn" data-lang="en" onclick="setLang('en')">EN</button>
@@ -401,7 +401,7 @@ const I18N = {
   pt: {
     brand: 'Rank LoL',
     brand_sub: 'League of Legends · Custom Commands',
-    home: 'Inicio',
+    home: 'Portfólio',
     hero_title: 'Rank LoL',
     hero_desc: 'Comandos customizados para exibir o seu rank de League of Legends em tempo real na Twitch',
     search_title: 'Buscar Jogador',
@@ -441,7 +441,7 @@ const I18N = {
   en: {
     brand: 'Rank LoL',
     brand_sub: 'League of Legends · Custom Commands',
-    home: 'Home',
+    home: 'Portfolio',
     hero_title: 'Rank LoL',
     hero_desc: 'Custom commands to display your League of Legends rank in real time on Twitch chat',
     search_title: 'Search Player',
@@ -591,38 +591,45 @@ function insertVar(variable) {
   ta.selectionStart = ta.selectionEnd = s + variable.length;
 }
 
-// Resolve o PUUID a partir do método ativo no Passo 2
-// Retorna { puuid, error } — error é uma chave i18n para mostrar como toast
-async function resolveGenPuuid() {
+// Resolve a identidade do jogador a partir do método ativo no Passo 2
+// Retorna { puuid } OU { nick, tag, region } — o backend lida com os dois formatos.
+// Quando é nick+tag, NÃO chamamos a Riot aqui: a URL vai sair com nick+tag e o backend resolve.
+function resolveGenIdentity() {
   if (currentGenMethod === 'puuid') {
     const puuid = document.getElementById('genPuuid').value.trim();
-    if (!puuid) return { puuid: null, error: 'toast_fill_puuid' };
+    if (!puuid) return { error: 'toast_fill_puuid' };
     return { puuid };
   }
 
-  // nick + tag + região
-  const gameName = document.getElementById('genGameName').value.trim();
-  const tagLine = document.getElementById('genTagLine').value.trim().replace('#', '');
+  const nick = document.getElementById('genGameName').value.trim();
+  const tag = document.getElementById('genTagLine').value.trim().replace('#', '');
   const region = document.getElementById('genRegion').value;
-  if (!gameName || !tagLine) return { puuid: null, error: 'toast_fill_nicktag' };
-
-  // Resolve nick+tag → puuid via /api/register (salva no banco também)
-  const res = await fetch(`${API_URL}/api/register`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ gameName, tagLine, region })
-  });
-  const data = await res.json();
-  if (!res.ok) return { puuid: null, errorMsg: data.error || 'Error' };
-  return { puuid: data.puuid };
+  if (!nick || !tag) return { error: 'toast_fill_nicktag' };
+  return { nick, tag, region };
 }
 
-// Monta URL "clean" — só codifica o que de fato quebra a URL
-function buildCleanUrl(puuid, msg, queue, lang) {
-  const safeMsg = String(msg).replace(/[&#?%]/g, encodeURIComponent);
-  const safeQueue = String(queue).replace(/[&#?%]/g, encodeURIComponent);
-  const safeLang = String(lang).replace(/[&#?%]/g, encodeURIComponent);
-  return `${window.location.origin}/cmd/lol/${puuid}?msg="${safeMsg}"&queue=${safeQueue}&lang=${safeLang}`;
+// Codifica preservando legibilidade — só escapa o que de fato quebra URL
+function safeEncode(s) {
+  return String(s).replace(/[&#?%]/g, encodeURIComponent);
+}
+
+// Monta URL "clean" no formato apropriado:
+// - PUUID: /cmd/lol?puuid=...&msg=...
+// - Nick + tag: /cmd/lol?nick=...&tag=...&region=...&msg=...
+function buildCleanUrl(identity, msg, queue, lang) {
+  const safeMsg = safeEncode(msg);
+  const safeQueue = safeEncode(queue);
+  const safeLang = safeEncode(lang);
+  const base = `${window.location.origin}/cmd/lol`;
+
+  let idPart;
+  if (identity.puuid) {
+    idPart = `puuid=${safeEncode(identity.puuid)}`;
+  } else {
+    idPart = `nick=${safeEncode(identity.nick)}&tag=${safeEncode(identity.tag)}&region=${safeEncode(identity.region)}`;
+  }
+
+  return `${base}?${idPart}&msg="${safeMsg}"&queue=${safeQueue}&lang=${safeLang}`;
 }
 
 async function generateCommand() {
@@ -632,9 +639,9 @@ async function generateCommand() {
   btn.innerHTML = '<div class="spinner"></div> ' + t('toast_generating');
 
   try {
-    const { puuid, error, errorMsg } = await resolveGenPuuid();
-    if (!puuid) {
-      showAlert(errorMsg || t(error), 'error');
+    const identity = resolveGenIdentity();
+    if (identity.error) {
+      showAlert(t(identity.error), 'error');
       return;
     }
 
@@ -643,12 +650,15 @@ async function generateCommand() {
     if (!template) template = DEFAULT_TEMPLATE[currentLang] || DEFAULT_TEMPLATE.pt;
     const queue = document.getElementById('queueSelect').value;
 
-    // chama o backend para validar e gerar o preview
-    const params = new URLSearchParams({ msg: template, queue, lang: currentLang });
-    const res = await fetch(`${API_URL}/cmd/lol/${puuid}?${params.toString()}&format=text`);
+    // Monta a URL no formato que o usuário escolheu (puuid OU nick+tag)
+    const apiLink = buildCleanUrl(identity, template, queue, currentLang);
+
+    // Chama o backend usando essa mesma URL para o preview ficar consistente
+    const previewUrl = apiLink + '&format=text';
+    const res = await fetch(previewUrl);
     const text = await res.text();
 
-    showResult(puuid, template, queue, text);
+    showResult(apiLink, text);
   } catch (err) {
     showAlert(t('toast_err_conn') + err.message, 'error');
   } finally {
@@ -657,11 +667,10 @@ async function generateCommand() {
   }
 }
 
-function showResult(puuid, template, queue, resultText) {
+function showResult(apiLink, resultText) {
   document.getElementById('twitchUserCmd').textContent = '!elo';
   document.getElementById('twitchBotMsg').textContent = resultText;
 
-  const apiLink = buildCleanUrl(puuid, template, queue, currentLang);
   document.getElementById('customApiField').value = `$(customapi ${apiLink})`;
   document.getElementById('webViewLink').value = apiLink;
   document.getElementById('testResult').style.display = 'block';
